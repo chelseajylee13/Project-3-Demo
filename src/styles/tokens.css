@@ -1,0 +1,22 @@
+:root {
+  color-scheme: light;
+  --color-ink: #172035;
+  --color-muted: #526078;
+  --color-border: #c6d3e3;
+  --color-surface: #ffffff;
+  --color-canvas: #f4f8fc;
+  --color-sky: #dff3ff;
+  --color-sky-strong: #b9e4fb;
+  --color-grass: #dff1d4;
+  --color-coral: #ff725e;
+  --color-blue: #155bb5;
+  --color-blue-dark: #0c438a;
+  --color-focus: #ffb000;
+  --shadow-card: 0 1rem 2.5rem rgb(26 54 93 / 0.1);
+  --radius-small: 0.65rem;
+  --radius-medium: 1rem;
+  --radius-large: 1.5rem;
+  --content-width: 75rem;
+  --font-body: Inter, ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --transition-fast: 160ms ease;
+}

@@ -46,4 +46,25 @@ When the Developer directs the Agent to save the transcript, save the entire cur
 
 # Project
 
-Fill in as the project takes shape: how to run it locally, how to test it, and any commands or structure that aren't obvious from the code.
+PUPCAST is a static Vite application built with semantic HTML, responsive CSS, and modular vanilla JavaScript. Use Node.js 22.12 or newer and npm.
+
+## Local commands
+
+- `npm install` installs the development dependencies.
+- `npm run dev` starts the Vite development server.
+- `npm test` runs the Vitest suite once.
+- `npm run test:watch` runs Vitest in watch mode.
+- `npm run build` creates the production files in `dist/` using repository-relative asset paths.
+- `npm run preview` serves the production build locally for final checks.
+
+## Project structure
+
+- `src/services/` contains browser and external-service adapters.
+- `src/domain/` contains pure weather and recommendation rules.
+- `src/state/` creates and updates application state.
+- `src/views/` renders interface screens from state.
+- `src/styles/` contains shared tokens, base rules, components, and responsive layout rules.
+- `src/assets/` contains reviewed production assets only; reference drawings remain in `reference/` and must not ship.
+- `tests/fixtures/` contains deterministic weather and geocoding fixtures.
+
+GitHub Pages deployment is defined in `.github/workflows/deploy-pages.yml`. In repository Settings, Pages must use **GitHub Actions** as its source.
