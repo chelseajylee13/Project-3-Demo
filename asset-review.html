@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PUPCAST production asset review</title>
+    <style>
+      :root { color: #172035; background: #f4f8fc; font: 16px/1.5 Inter, "Segoe UI", sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 2rem; }
+      main { width: min(100%, 76rem); margin-inline: auto; }
+      h1, h2 { line-height: 1.15; }
+      section { margin-block: 3rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1rem; }
+      .card { margin: 0; border: 1px solid #c6d3e3; border-radius: 1rem; padding: 0.75rem; background: #fff; }
+      .checker { position: relative; overflow: hidden; aspect-ratio: 2 / 3; border-radius: 0.65rem; background-color: #fff; background-image: linear-gradient(45deg, #dfe8f1 25%, transparent 25%), linear-gradient(-45deg, #dfe8f1 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #dfe8f1 75%), linear-gradient(-45deg, transparent 75%, #dfe8f1 75%); background-position: 0 0, 0 0.5rem, 0.5rem -0.5rem, -0.5rem 0; background-size: 1rem 1rem; }
+      .checker img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; }
+      figcaption { padding-block-start: 0.6rem; font-weight: 700; }
+      .icons .card { aspect-ratio: 1; display: grid; place-items: center; }
+      .icons img { width: 4rem; height: 4rem; }
+      .combined { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+      .note { max-width: 70ch; color: #526078; }
+      @media (max-width: 38rem) { body { padding: 1rem; } .grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>PUPCAST production asset review</h1>
+      <p class="note">This repository-only board compares transparent edges, silhouette, alignment, and legibility at responsive card sizes. It is not part of the production application entry point.</p>
+
+      <section>
+        <h2>Master and base outfits</h2>
+        <div class="grid" id="outfits"></div>
+      </section>
+
+      <section>
+        <h2>Modifier overlays on representative outfits</h2>
+        <div class="grid combined" id="modifiers"></div>
+      </section>
+
+      <section>
+        <h2>Combined modifier checks</h2>
+        <div class="grid combined" id="combined"></div>
+      </section>
+
+      <section>
+        <h2>Weather icons</h2>
+        <div class="grid icons" id="weather-icons"></div>
+      </section>
+
+      <section>
+        <h2>Reminder icons</h2>
+        <div class="grid icons" id="reminder-icons"></div>
+      </section>
+
+      <section>
+        <h2>Interface and status icons</h2>
+        <div class="grid icons" id="interface-icons"></div>
+      </section>
+    </main>
+    <script>
+      const assetRoot = './src/assets/';
+      const categories = ['hot', 'warm', 'mild', 'cool', 'cold', 'very-cold'];
+      const outfits = ['character/master-bichon.png', ...categories.flatMap((category) => [1, 2, 3].map((variation) => `character/outfits/${category}-${variation}.png`))];
+      const weatherIcons = ['clear', 'partly-cloudy', 'overcast', 'fog', 'rain', 'snow', 'thunderstorm'];
+      const reminderIcons = ['umbrella', 'water-resistant-shoes', 'sunscreen', 'water'];
+      const interfaceIcons = ['location', 'search', 'close', 'calendar', 'information', 'back', 'external-link', 'retry', 'status', 'loading'];
+      const modifierChecks = [
+        ['rain', 'mild-1'],
+        ['snow', 'cold-1'],
+        ['wind', 'mild-1'],
+        ['high-uv', 'hot-1'],
+        ['heat', 'hot-1'],
+      ];
+
+      function card(label, sources, className = '') {
+        const figure = document.createElement('figure');
+        figure.className = `card ${className}`.trim();
+        if (className === 'icon-card') {
+          const image = new Image();
+          image.src = `${assetRoot}${sources[0]}`;
+          image.alt = '';
+          figure.append(image);
+        } else {
+          const stage = document.createElement('div');
+          stage.className = 'checker';
+          sources.forEach((source) => {
+            const image = new Image();
+            image.src = `${assetRoot}${source}`;
+            image.alt = '';
+            stage.append(image);
+          });
+          figure.append(stage);
+        }
+        const caption = document.createElement('figcaption');
+        caption.textContent = label;
+        figure.append(caption);
+        return figure;
+      }
+
+      outfits.forEach((source) => document.querySelector('#outfits').append(card(source.split('/').at(-1), [source])));
+      modifierChecks.forEach(([modifier, outfit]) => document.querySelector('#modifiers').append(card(modifier, [`character/outfits/${outfit}.png`, `character/modifiers/${modifier}.png`])));
+      [
+        ['Hot + high UV + heat', ['character/outfits/hot-2.png', 'character/modifiers/high-uv.png', 'character/modifiers/heat.png']],
+        ['Mild + rain + high UV', ['character/outfits/mild-2.png', 'character/modifiers/rain.png', 'character/modifiers/high-uv.png']],
+        ['Cold + snow + high UV', ['character/outfits/cold-2.png', 'character/modifiers/snow.png', 'character/modifiers/high-uv.png']],
+      ].forEach(([label, sources]) => document.querySelector('#combined').append(card(label, sources)));
+      weatherIcons.forEach((name) => document.querySelector('#weather-icons').append(card(name, [`icons/weather/${name}.svg`], 'icon-card')));
+      reminderIcons.forEach((name) => document.querySelector('#reminder-icons').append(card(name, [`icons/reminders/${name}.svg`], 'icon-card')));
+      interfaceIcons.forEach((name) => document.querySelector('#interface-icons').append(card(name, [`icons/interface/${name}.svg`], 'icon-card')));
+    </script>
+  </body>
+</html>

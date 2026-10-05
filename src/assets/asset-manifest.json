@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "referencePolicy": {
+    "designAnchor": "reference/35-main-laptop-final.png",
+    "designAnchorCredit": "Original Bichon character design and visual direction by Chelsea Lee",
+    "shippingRule": "Files in reference/ are process records only and must not ship with the application."
+  },
+  "rasterCanvas": {
+    "width": 1024,
+    "height": 1536,
+    "format": "transparent PNG",
+    "centerX": 512,
+    "headTopY": 120,
+    "footBaselineY": 1400,
+    "safeMargin": 72,
+    "alignmentRule": "Keep the character centered on x=512, the top of the fluffy head near y=120, and both feet on y=1400. Do not crop fur, clothing, footwear, accessories, or handheld items."
+  },
+  "reviewCriteria": [
+    "Matches Chelsea Lee's rounded Bichon silhouette and friendly expression",
+    "Uses the same front-facing neutral pose and proportions across every outfit",
+    "Has clean transparent edges without halos or background pixels",
+    "Keeps clothing and footwear readable at phone and laptop display sizes",
+    "Contains no unintended text, logos, anatomy errors, duplicate parts, or generation artifacts"
+  ],
+  "reviewDisplaySizes": {
+    "phone": "180 CSS pixels wide",
+    "laptop": "320 CSS pixels wide",
+    "reviewBoard": "asset-review.html"
+  },
+  "optimization": {
+    "status": "reviewed",
+    "method": "Retained the source 1024x1536 PNGs because a lossless System.Drawing re-encode increased representative file sizes by 30-39%; Vite will fingerprint the files and the browser loads only the selected outfit and eligible modifiers.",
+    "svgMethod": "Hand-authored SVGs use compact paths, a shared 64x64 or 24x24 viewBox, and no embedded metadata."
+  },
+  "groups": {
+    "masterCharacter": {
+      "status": "approved",
+      "file": "character/master-bichon.png",
+      "dimensions": "1024x1536",
+      "productionMethod": "Built-in OpenAI image generation using reference/35-main-laptop-final.png as Chelsea Lee's design anchor, followed by a transparency-cleanup edit.",
+      "reviewedBy": "Chelsea Lee",
+      "reviewedOn": "2026-10-05",
+      "altGuidance": "Describe the upright Bichon mascot and only the clothing or accessories that communicate the current recommendation."
+    },
+    "baseOutfits": {
+      "status": "approved",
+      "directory": "character/outfits",
+      "categories": ["hot", "warm", "mild", "cool", "cold", "very-cold"],
+      "variationsPerCategory": 3,
+      "filenamePattern": "{category}-{variation}.png",
+      "approvedCategories": {
+        "hot": {
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "files": ["hot-1.png", "hot-2.png", "hot-3.png"],
+          "outfits": [
+            "Coral sleeveless top, navy athletic shorts, white sneakers",
+            "Sky-blue tank top, sage loose shorts, white sneakers",
+            "Yellow Hawaiian camp shirt, airy teal pants, white sneakers"
+          ]
+        },
+        "warm": {
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "files": ["warm-1.png", "warm-2.png", "warm-3.png"],
+          "outfits": [
+            "Burnt-orange T-shirt, lightweight khaki shorts, white sneakers",
+            "Mint-green T-shirt, lightweight light-wash jeans, white sneakers",
+            "Navy polo, lightweight beige pants, white sneakers"
+          ]
+        },
+        "mild": {
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "files": ["mild-1.png", "mild-2.png", "mild-3.png"],
+          "outfits": [
+            "Lavender hoodie, medium-blue jeans, white sneakers",
+            "Dark forest-green crewneck sweatshirt with bold white vintage COLLEGE lettering, charcoal casual pants, white sneakers",
+            "Light-blue denim jacket over a coral T-shirt, beige jeans, white sneakers"
+          ]
+        },
+        "cool": {
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "files": ["cool-1.png", "cool-2.png", "cool-3.png"],
+          "outfits": [
+            "Rust-red knit crewneck sweater, medium-blue jeans, cream closed-toe shoes",
+            "Heather-gray hoodie under a mustard-yellow lightweight jacket, dark olive pants, white sneakers",
+            "Muted teal long-sleeve shirt under a burgundy plaid overshirt, beige pants, brown closed-toe shoes"
+          ]
+        },
+        "cold": {
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "files": ["cold-1.png", "cold-2.png", "cold-3.png"],
+          "outfits": [
+            "Deep-navy quilted puffer over a burnt-orange ribbed sweater, charcoal pants, tan ankle boots",
+            "Camel wool-style coat over a burgundy hoodie, dark indigo jeans, dark-brown ankle boots",
+            "Forest-green insulated jacket over a cream cable-knit top, dark-brown pants, black ankle boots"
+          ]
+        },
+        "very-cold": {
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "files": ["very-cold-1.png", "very-cold-2.png", "very-cold-3.png"],
+          "outfits": [
+            "Arctic-blue fur-trimmed parka, charcoal insulated pants, navy winter boots, coral knit hat and mittens, cream neck warmer",
+            "Long plum puffer coat over an oatmeal sweater, dark-navy pants, brown winter boots, mustard knit hat and gloves, teal scarf",
+            "Burnt-orange insulated jacket over a deep-teal hoodie, black fleece-lined pants and winter boots, deep-teal knit hat, black mittens, cream scarf"
+          ],
+          "displayNote": "Developer accepted the visually reviewed set for the fastest path after generative cleanup could not fully standardize faint peripheral alpha. Render all outfit canvases with a consistent object-fit/object-position rule in the application."
+        }
+      }
+    },
+    "weatherModifiers": {
+      "status": "approved",
+      "directory": "character/modifiers",
+      "files": [
+        "rain.png",
+        "snow.png",
+        "wind.png",
+        "high-uv.png",
+        "heat.png"
+      ],
+      "dimensions": "1024x1536 transparent PNG each",
+      "productionMethod": "Built-in OpenAI image generation using the approved master Bichon as an alignment and style reference; generated as isolated transparent clothing/accessory overlays.",
+      "reviewedBy": "Chelsea Lee",
+      "reviewedOn": "2026-10-05",
+      "altGuidance": "Do not give modifier layers separate alternative text. Describe the combined mascot outfit and only the active weather-protection details in the final mascot alternative text."
+    },
+    "weatherIcons": {
+      "status": "approved",
+      "directory": "icons/weather",
+      "format": "SVG",
+      "files": ["clear.svg", "partly-cloudy.svg", "overcast.svg", "fog.svg", "rain.svg", "snow.svg", "thunderstorm.svg"],
+      "productionMethod": "Hand-authored SVGs using the approved PUPCAST palette and rounded illustration language.",
+      "reviewedBy": "Chelsea Lee",
+      "reviewedOn": "2026-10-05",
+      "altGuidance": "Use the normalized weather-condition label when the icon conveys information; otherwise use empty alternative text."
+    },
+    "reminderIcons": {
+      "status": "approved",
+      "directory": "icons/reminders",
+      "format": "SVG",
+      "files": ["umbrella.svg", "water-resistant-shoes.svg", "sunscreen.svg", "water.svg"],
+      "productionMethod": "Hand-authored SVGs using the approved PUPCAST palette and rounded illustration language.",
+      "reviewedBy": "Chelsea Lee",
+      "reviewedOn": "2026-10-05",
+      "altGuidance": "Use empty alternative text because each reminder card includes a visible text label."
+    },
+    "interfaceIcons": {
+      "status": "approved",
+      "directory": "icons/interface",
+      "format": "SVG",
+      "files": ["location.svg", "search.svg", "close.svg", "calendar.svg", "information.svg", "back.svg", "external-link.svg", "retry.svg", "status.svg", "loading.svg"],
+      "productionMethod": "Hand-authored stroke SVGs that inherit currentColor for accessible interface use.",
+      "reviewedBy": "Chelsea Lee",
+      "reviewedOn": "2026-10-05",
+      "altGuidance": "Use empty alternative text when an icon accompanies visible text. Icon-only controls require a programmatic control name rather than image alternative text. Loading and status copy is announced through the relevant live region."
+    }
+  }
+}
