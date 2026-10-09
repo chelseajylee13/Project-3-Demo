@@ -80,11 +80,11 @@ Main risks are inconsistent or late artwork, incorrect timezone/date slicing, in
 - [x] Implement the inclusive 8:00 AM-8:00 PM local evaluation window, average apparent temperature, category thresholds, modifier thresholds, and missing-data rules from `spec.md`
 - [x] Implement separately salted deterministic hashes for the outfit and each eligible reminder, keyed by coordinates and ISO date
 - [x] Implement Forecast Change baselines, crossings, direction, approximate time, precipitation-over-temperature priority, and steady-state wording
-- [ ] Finalize the immutable recommendation-state function with one integrated primary-weather outfit, secondary conditions in the UI, accurate visible-outfit descriptions, and no composited modifier assets
+- [x] Finalize the immutable recommendation-state function with one integrated primary-weather outfit, secondary-condition guidance and reminders for the UI, accurate visible-outfit descriptions, and no composited modifier assets
 - [x] Keep recommendation thresholds in Fahrenheit and implement Celsius as display-only conversion
 - [x] Unit-test boundary values, DST/timezone handling, incomplete arrays, modifier combinations, independent variation selection, repeat visits, and changed eligibility
 - [x] Run the full automated suite and inspect representative states before Developer review
-- [ ] Commit the tested domain layer
+- [x] Commit the tested domain layer
 
 #### Checkpoint 4: Live data, location, persistence, and failures
 
@@ -215,6 +215,7 @@ Record material plan changes and why they were made.
 - 2026-10-09: The Developer confirmed that hot + snow should not be represented as a valid outfit combination. Recommendation state now marks this provider-data combination unavailable (`inconsistent-weather-data`) while retaining reported summary values. The interface must explain the inconsistency and offer Retry; an automated domain test covers the case.
 - 2026-10-09: The remaining wind/cold and wind/very-cold candidates and five heat candidates (warm through very-cold) were generated with the built-in image tool as complete character illustrations. All seven are 1024 × 1536 transparent-corner PNGs under `reference/`; the review board now shows the full six-look wind and heat families. They are candidates only, pending Developer visual approval before production promotion.
 - 2026-10-09: The Developer approved the full wind and heat families. All 12 reviewed images were copied into `src/assets/character/weather/` without overwriting the reference originals. The recommendation state now selects one integrated outfit by snow → rain → wind → high UV → heat priority, with no modifier overlay assets in its output; secondary conditions remain in reminders and written guidance.
+- 2026-10-09: Checkpoint 3 recommendation state was finalized with image-specific descriptions for all 29 eligible integrated looks, one selected primary outfit, and secondary conditions retained in guidance and reminders for later UI rendering. Automated coverage verifies all 29 description/asset pairs and the excluded hot + snow pair.
 
 ## Saving transcripts
 
