@@ -219,6 +219,63 @@
   color: var(--color-muted);
 }
 
+.weather-controls {
+  margin-block-start: 1rem;
+}
+
+.weather-controls label {
+  display: block;
+  margin-block: 0.75rem 0.3rem;
+  font-weight: 750;
+}
+
+.weather-controls input {
+  width: min(100%, 26rem);
+  min-height: 2.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  padding-inline: 0.8rem;
+  font: inherit;
+}
+
+.weather-controls__actions,
+.weather-controls__results,
+.weather-controls__dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+}
+
+.weather-controls button {
+  min-height: 2.75rem;
+  border: 1px solid #82b5e9;
+  border-radius: var(--radius-small);
+  padding: 0.5rem 0.8rem;
+  background: #edf7ff;
+  color: var(--color-blue-dark);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.weather-controls button:hover,
+.weather-controls button:focus-visible,
+.weather-controls button[aria-pressed='true'] {
+  background: var(--color-blue-dark);
+  color: white;
+}
+
+.weather-controls button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.weather-controls__status,
+.weather-controls__forecast {
+  margin-block-start: 1rem;
+}
+
 .about-heading {
   display: flex;
   align-items: center;

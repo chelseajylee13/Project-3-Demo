@@ -89,7 +89,7 @@ function createMascotPlaceholder() {
   return figure;
 }
 
-function createFirstUsePanel(message) {
+function createFirstUsePanel(state) {
   const section = createElement('section', {
     className: 'first-use-panel',
     attributes: { 'aria-labelledby': 'first-use-heading' },
@@ -101,7 +101,7 @@ function createFirstUsePanel(message) {
       text: 'What should you wear today?',
       attributes: { id: 'first-use-heading' },
     }),
-    createElement('p', { className: 'lede', text: message }),
+    createElement('p', { className: 'lede', text: state.status.message }),
   );
 
   const prompt = createElement('div', {
@@ -117,9 +117,9 @@ function createFirstUsePanel(message) {
     createElement('div', { className: 'location-prompt__text' }),
   );
   prompt.lastElementChild.append(
-    createElement('strong', { text: 'No location selected' }),
+    createElement('strong', { text: state.location?.label ?? 'No location selected' }),
     createElement('span', {
-      text: 'City search and device location arrive in the live-data checkpoint.',
+      text: state.status.message,
     }),
   );
   copy.append(prompt);
@@ -138,6 +138,94 @@ function createPreviewCard(title, text, modifier = '') {
   return article;
 }
 
+function createWeatherControls(state) {
+  const section = createElement('section', {
+    className: 'weather-controls preview-card',
+    attributes: { 'aria-labelledby': 'weather-controls-heading' },
+  });
+  section.append(createElement('h2', { text: 'Choose your weather location', attributes: { id: 'weather-controls-heading' } }));
+
+  const searchLabel = createElement('label', { text: 'US city or ZIP code', attributes: { for: 'location-search' } });
+  const searchInput = createElement('input', {
+    attributes: {
+      id: 'location-search', type: 'search', autocomplete: 'off',
+      placeholder: 'Austin, TX or 78701', value: state.search.query,
+      'aria-controls': 'location-results',
+    },
+  });
+  section.append(searchLabel, searchInput);
+
+  const actions = createElement('div', { className: 'weather-controls__actions' });
+  actions.append(createElement('button', {
+    text: state.status.kind === 'locating' ? 'Locating…' : 'Use my location',
+    attributes: { type: 'button', 'data-weather-action': 'locate',
+      ...(state.status.kind === 'locating' ? { disabled: '' } : {}) },
+  }));
+  if (state.location) {
+    actions.append(createElement('button', {
+      text: 'Retry weather',
+      attributes: { type: 'button', 'data-weather-action': 'retry' },
+    }));
+  }
+  section.append(actions);
+
+  const results = createElement('div', {
+    className: 'weather-controls__results',
+    attributes: { id: 'location-results', 'aria-label': 'Location search results' },
+  });
+  if (state.search.message) {
+    results.append(createElement('p', {
+      text: state.search.message,
+      attributes: { role: 'status', 'aria-live': 'polite' },
+    }));
+  }
+  state.search.results.forEach((location, index) => {
+    results.append(createElement('button', {
+      text: location.label,
+      attributes: { type: 'button', 'data-location-index': String(index) },
+    }));
+  });
+  section.append(results);
+
+  const status = createElement('p', {
+    className: 'weather-controls__status',
+    text: state.status.message,
+    attributes: { role: 'status', 'aria-live': 'polite' },
+  });
+  section.append(status);
+
+  if (state.model) {
+    const forecast = createElement('div', { className: 'weather-controls__forecast' });
+    const modelLabel = state.model.location.label;
+    forecast.append(createElement('h3', { text: `Seven-day forecast for ${modelLabel}` }));
+    if (state.status.kind === 'stale' || state.location?.label !== modelLabel) {
+      forecast.append(createElement('p', { text: 'Showing the last successful forecast.' }));
+    }
+    const dates = createElement('div', {
+      className: 'weather-controls__dates',
+      attributes: { 'aria-label': 'Forecast dates' },
+    });
+    state.model.days.forEach((day) => {
+      dates.append(createElement('button', {
+        text: new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' })
+          .format(new Date(`${day.date}T12:00:00Z`)),
+        attributes: {
+          type: 'button', 'data-forecast-date': day.date,
+          'aria-pressed': String(day.date === state.selectedDate),
+        },
+      }));
+    });
+    forecast.append(dates);
+    forecast.append(createElement('p', {
+      text: state.recommendation?.available
+        ? `Selected ${state.selectedDate}: ${state.recommendation.category} outfit guidance is ready.`
+        : `Selected ${state.selectedDate}: outfit guidance is unavailable because required weather data is missing.`,
+    }));
+    section.append(forecast);
+  }
+  return section;
+}
+
 function createHome(state) {
   const main = createElement('main', {
     className: 'page page--home',
@@ -145,7 +233,8 @@ function createHome(state) {
   });
   const shell = createElement('div', { className: 'page-shell' });
   shell.append(
-    createFirstUsePanel(state.status.message),
+    createFirstUsePanel(state),
+    createWeatherControls(state),
     createElement('section', {
       className: 'preview-grid',
       attributes: {

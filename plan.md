@@ -88,15 +88,15 @@ Main risks are inconsistent or late artwork, incorrect timezone/date slicing, in
 
 #### Checkpoint 4: Live data, location, persistence, and failures
 
-- [ ] Implement debounced US-only city/ZIP geocoding with result, no-result, service-error, cancellation, and race-condition handling
-- [ ] Implement browser geolocation only after explicit activation, including locating, success, denial, unavailable, and timeout states while retaining manual search
-- [ ] Implement guarded persistence of exactly one recent location label and coordinate pair; replacement removes the prior value and blocked storage leaves the session usable
-- [ ] Implement the exact Open-Meteo forecast request required by R3 with location-local timezone and seven dates
-- [ ] Connect restored, manual, and device locations to fetching, normalization, date selection, Retry, stale in-memory content, and missing-data handling
-- [ ] Implement exactly seven consecutive local date choices and a visible/programmatic selected state
-- [ ] Test live requests against Open-Meteo and test deterministic fixtures for offline, malformed, incomplete, slow, aborted, and out-of-order responses
+- [x] Implement debounced US-only city/ZIP geocoding with result, no-result, service-error, cancellation, and race-condition handling
+- [x] Implement browser geolocation only after explicit activation, including locating, success, denial, unavailable, and timeout states while retaining manual search
+- [x] Implement guarded persistence of exactly one recent location label and coordinate pair; replacement removes the prior value and blocked storage leaves the session usable
+- [x] Implement the exact Open-Meteo forecast request required by R3 with location-local timezone and seven dates
+- [x] Connect restored, manual, and device locations to fetching, normalization, date selection, Retry, stale in-memory content, and missing-data handling
+- [x] Implement exactly seven consecutive local date choices and a visible/programmatic selected state
+- [x] Test live requests against Open-Meteo and test deterministic fixtures for offline, malformed, incomplete, slow, aborted, and out-of-order responses
 - [ ] Inspect storage and network activity to confirm there is one location record, no API key, and no analytics, advertising, or application-cookie traffic
-- [ ] Commit the working data flow
+- [x] Commit the working data flow
 
 #### Checkpoint 5: Complete responsive and accessible interface
 
@@ -186,6 +186,10 @@ Complete one table per participant using labels P1, P2, and P3.
 - **Revision verification:** To be completed after the updated public build is tested.
 
 ## Revisions
+
+- 2026-10-09: Added working Home controls for US city/ZIP search, explicit device location, Retry, and seven date buttons with `aria-pressed` selection. Search results clear after selection, and stale or missing-data states remain visible. All 80 tests and the production build pass. Browser storage/network inspection remains open because local Chrome and Edge headless debugging both failed to start in this environment; the Checkpoint 5 final visual design remains separate.
+- 2026-10-09: Began Checkpoint 4 with independently testable Open-Meteo geocoding/forecast, browser device-location, and one-record storage adapters. The adapter tests cover required request fields and units, US filtering, cancellation forwarding, network and malformed responses, browser permission/error codes, seven consecutive forecast dates, and blocked storage. These are not connected to the interface yet, so Checkpoint 4 boxes remain open.
+- 2026-10-09: Connected the adapters through a state controller and app shell. Restore, manual/device selection methods, seven-date state, Retry, stale in-memory weather, missing apparent-temperature handling, debounced search, and out-of-order suppression pass deterministic tests. Live Austin forecast and city/ZIP requests succeeded; the forecast returned seven dates in America/Chicago and snowfall units of inches. Storage, forecast-request, and live/fixture-test tasks are checked; user-facing search and date controls, browser network/storage inspection, and the Checkpoint 4 commit remain open.
 
 Record material plan changes and why they were made.
 
