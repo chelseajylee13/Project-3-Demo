@@ -29,7 +29,7 @@
   },
   "optimization": {
     "status": "reviewed",
-    "method": "Retained the source 1024x1536 PNGs because a lossless System.Drawing re-encode increased representative file sizes by 30-39%; Vite will fingerprint the files and the browser loads only the selected outfit and eligible modifiers.",
+    "method": "Retained the source 1024x1536 PNGs because a lossless System.Drawing re-encode increased representative file sizes by 30-39%; Vite will fingerprint the files and the browser loads only the selected complete outfit and relevant icons.",
     "svgMethod": "Hand-authored SVGs use compact paths, a shared 64x64 or 24x24 viewBox, and no embedded metadata."
   },
   "groups": {
@@ -112,8 +112,60 @@
         }
       }
     },
-    "weatherModifiers": {
+    "integratedWeatherOutfits": {
       "status": "approved",
+      "directory": "character/weather",
+      "dimensions": "1024x1536 transparent PNG each",
+      "filenamePattern": "{modifier}-{category}.png",
+      "variationsPerEligiblePair": 1,
+      "primaryPriority": ["snow", "rain", "wind", "high-uv", "heat"],
+      "excludedPair": "snow + hot",
+      "approvedFamilies": {
+        "high-uv": {
+          "categories": ["hot", "warm", "mild", "cool", "cold", "very-cold"],
+          "files": ["high-uv-hot.png", "high-uv-warm.png", "high-uv-mild.png", "high-uv-cool.png", "high-uv-cold.png", "high-uv-very-cold.png"],
+          "productionMethod": "Built-in OpenAI identity-preserving edits of the corresponding approved base outfits, using the Developer-approved warm high-UV look as the sunglasses reference.",
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "reviewNote": "Sunglasses genuinely cover both eyes. Hot through cool looks include sun hats; cold and very-cold looks retain temperature-appropriate clothing instead of adding a straw hat. Chelsea Lee approved the six-look family after reviewing the repository board."
+        },
+        "rain": {
+          "categories": ["hot", "warm", "mild", "cool", "cold", "very-cold"],
+          "files": ["rain-hot.png", "rain-warm.png", "rain-mild.png", "rain-cool.png", "rain-cold.png", "rain-very-cold.png"],
+          "productionMethod": "Built-in OpenAI identity-preserving edits of the corresponding approved base outfits, using the mild integrated rain look as the umbrella and jacket reference; hot and warm shoes received targeted waterproof-rubber edits.",
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "reviewNote": "Each complete character wears a temperature-appropriate rain jacket, holds one coral umbrella, and wears water-resistant shoes or boots. Chelsea Lee approved the six-look family after reviewing the repository board."
+        },
+        "snow": {
+          "categories": ["warm", "mild", "cool", "cold", "very-cold"],
+          "files": ["snow-warm.png", "snow-mild.png", "snow-cool.png", "snow-cold.png", "snow-very-cold.png"],
+          "productionMethod": "Built-in OpenAI identity-preserving edits of the corresponding approved base outfits, using the approved cold snow look as an integrated-winterwear reference; cold gloves and the very-cold green neck scarf received targeted edits.",
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-05",
+          "reviewNote": "Complete snow looks use temperature-scaled insulation, waterproof boots, and gloves; the very-cold look has a green knit neck scarf. No hot + snow artwork exists. Chelsea Lee approved the revised family after reviewing the board."
+        },
+        "wind": {
+          "categories": ["hot", "warm", "mild", "cool", "cold", "very-cold"],
+          "files": ["wind-hot.png", "wind-warm.png", "wind-mild.png", "wind-cool.png", "wind-cold.png", "wind-very-cold.png"],
+          "productionMethod": "Built-in OpenAI identity-preserving edits of approved base outfits; the cool integrated wind look guided the cold-weather windwear styling.",
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-09",
+          "reviewNote": "Six complete outfits with fitted wind-resistant outerwear appropriate to each temperature category."
+        },
+        "heat": {
+          "categories": ["hot", "warm", "mild", "cool", "cold", "very-cold"],
+          "files": ["heat-hot.png", "heat-warm.png", "heat-mild.png", "heat-cool.png", "heat-cold.png", "heat-very-cold.png"],
+          "productionMethod": "Built-in OpenAI identity-preserving edits of approved base outfits, using the hot integrated heat look as a reference for the held water bottle.",
+          "reviewedBy": "Chelsea Lee",
+          "reviewedOn": "2026-10-09",
+          "reviewNote": "Six complete temperature-appropriate outfits, each with one water bottle held naturally by the mascot."
+        }
+      },
+      "altGuidance": "Describe only the clothing and sun-protection items actually shown in the selected complete mascot image. Communicate secondary active modifiers in interface guidance and reminders."
+    },
+    "weatherModifiers": {
+      "status": "rejected-for-compositing",
       "directory": "character/modifiers",
       "files": [
         "rain.png",
@@ -126,7 +178,16 @@
       "productionMethod": "Built-in OpenAI image generation using the approved master Bichon as an alignment and style reference; generated as isolated transparent clothing/accessory overlays.",
       "reviewedBy": "Chelsea Lee",
       "reviewedOn": "2026-10-05",
+      "subsequentReview": "The Developer rejected the modifier overlays in combined mascot previews on 2026-10-05 because garments appeared pasted over the complete base outfits. Retain as process evidence only until a full-character replacement strategy is approved; do not render these layers in the finished app.",
       "altGuidance": "Do not give modifier layers separate alternative text. Describe the combined mascot outfit and only the active weather-protection details in the final mascot alternative text."
+    },
+    "mixedPrecipitationAccessory": {
+      "status": "rejected-for-compositing",
+      "file": "character/modifiers/umbrella.png",
+      "dimensions": "1024x1536 transparent PNG",
+      "productionMethod": "Built-in OpenAI image edit isolating the umbrella from the approved rain overlay, using the approved master Bichon as an alignment reference.",
+      "use": "Originally intended to stack above the snow outerwear. The combined overlay composition was rejected; do not render this layer in the finished app unless a new integrated design is reviewed.",
+      "altGuidance": "The separate overlay has empty alternative text; describe the umbrella once in the composed mascot alternative text."
     },
     "weatherIcons": {
       "status": "approved",

@@ -34,13 +34,55 @@
       </section>
 
       <section>
-        <h2>Modifier overlays on representative outfits</h2>
+        <h2>Integrated weather-outfit candidates</h2>
+        <p class="note">These complete-character renderings are review candidates, not yet production assets. The snow-only candidate now has insulated gloves.</p>
+        <div class="grid combined" id="integrated"></div>
+      </section>
+
+      <section>
+        <h2>High-UV outfit family</h2>
+        <p class="note">Approved production family. Sunglasses are worn over both eyes; cold and very-cold looks use their winter clothing instead of adding a straw sun hat.</p>
+        <div class="grid combined" id="uv-family"></div>
+      </section>
+
+      <section>
+        <h2>Rain outfit family</h2>
+        <p class="note">Approved production family. Each holds one umbrella and wears a fitted rain layer and water-resistant footwear; lighter and heavier looks follow the temperature category.</p>
+        <div class="grid combined" id="rain-family"></div>
+      </section>
+
+      <section>
+        <h2>Snow outfit family</h2>
+        <p class="note">Approved production family from warm through very cold, with integrated gloves and waterproof boots. Hot + snow is excluded. The warm look covers a possible data edge case where snowfall is reported despite a warm daily average.</p>
+        <div class="grid combined" id="snow-family"></div>
+      </section>
+
+      <section>
+        <h2>Wind outfit family</h2>
+        <p class="note">Approved production family. Six complete outfits with temperature-appropriate wind-resistant outerwear.</p>
+        <div class="grid combined" id="wind-family"></div>
+      </section>
+
+      <section>
+        <h2>Heat outfit family</h2>
+        <p class="note">Approved production family. Six temperature-appropriate outfits, each with a water bottle held by the mascot.</p>
+        <div class="grid combined" id="heat-family"></div>
+      </section>
+
+      <section>
+        <h2>Rejected modifier overlays on representative outfits</h2>
         <div class="grid combined" id="modifiers"></div>
       </section>
 
       <section>
-        <h2>Combined modifier checks</h2>
+        <h2>Rejected combined overlay checks</h2>
         <div class="grid combined" id="combined"></div>
+      </section>
+
+      <section>
+        <h2>Rejected snow overlay comparison</h2>
+        <p class="note">These process previews document why the overlay method was rejected. They are not approved production artwork. A hot-base snow example has been excluded from the art plan.</p>
+        <div class="grid combined" id="snow-redraw"></div>
       </section>
 
       <section>
@@ -78,7 +120,7 @@
         figure.className = `card ${className}`.trim();
         if (className === 'icon-card') {
           const image = new Image();
-          image.src = `${assetRoot}${sources[0]}`;
+          image.src = sources[0].startsWith('reference/') ? `./${sources[0]}` : `${assetRoot}${sources[0]}`;
           image.alt = '';
           figure.append(image);
         } else {
@@ -86,7 +128,7 @@
           stage.className = 'checker';
           sources.forEach((source) => {
             const image = new Image();
-            image.src = `${assetRoot}${source}`;
+            image.src = source.startsWith('reference/') ? `./${source}` : `${assetRoot}${source}`;
             image.alt = '';
             stage.append(image);
           });
@@ -99,12 +141,51 @@
       }
 
       outfits.forEach((source) => document.querySelector('#outfits').append(card(source.split('/').at(-1), [source])));
+      [
+        ['Snow / cold — gloves', 'integrated-snow-cold-gloves-review.png'],
+        ['Rain / mild', 'integrated-rain-mild-review.png'],
+        ['Wind / cool', 'integrated-wind-cool-review.png'],
+        ['High UV / warm — sunglasses worn', 'integrated-uv-warm-sunglasses-worn-review.png'],
+        ['Heat / hot', 'integrated-heat-hot-review.png'],
+      ].forEach(([label, file]) => document.querySelector('#integrated').append(card(label, [`reference/${file}`])));
+      [
+        ['Hot + high UV', 'high-uv-hot.png'],
+        ['Warm + high UV', 'high-uv-warm.png'],
+        ['Mild + high UV', 'high-uv-mild.png'],
+        ['Cool + high UV', 'high-uv-cool.png'],
+        ['Cold + high UV', 'high-uv-cold.png'],
+        ['Very cold + high UV', 'high-uv-very-cold.png'],
+      ].forEach(([label, file]) => document.querySelector('#uv-family').append(card(label, [`character/weather/${file}`])));
+      [
+        ['Hot + rain', 'rain-hot.png'],
+        ['Warm + rain', 'rain-warm.png'],
+        ['Mild + rain', 'rain-mild.png'],
+        ['Cool + rain', 'rain-cool.png'],
+        ['Cold + rain', 'rain-cold.png'],
+        ['Very cold + rain', 'rain-very-cold.png'],
+      ].forEach(([label, file]) => document.querySelector('#rain-family').append(card(label, [`character/weather/${file}`])));
+      [
+        ['Warm + snow', 'snow-warm.png'],
+        ['Mild + snow', 'snow-mild.png'],
+        ['Cool + snow', 'snow-cool.png'],
+        ['Cold + snow / gloves', 'snow-cold.png'],
+        ['Very cold + snow / green scarf', 'snow-very-cold.png'],
+      ].forEach(([label, file]) => document.querySelector('#snow-family').append(card(label, [`character/weather/${file}`])));
+      ['hot', 'warm', 'mild', 'cool', 'cold', 'very-cold'].forEach((category) => {
+        document.querySelector('#wind-family').append(card(`${category} + wind`, [`character/weather/wind-${category}.png`]));
+        document.querySelector('#heat-family').append(card(`${category} + heat`, [`character/weather/heat-${category}.png`]));
+      });
       modifierChecks.forEach(([modifier, outfit]) => document.querySelector('#modifiers').append(card(modifier, [`character/outfits/${outfit}.png`, `character/modifiers/${modifier}.png`])));
       [
         ['Hot + high UV + heat', ['character/outfits/hot-2.png', 'character/modifiers/high-uv.png', 'character/modifiers/heat.png']],
         ['Mild + rain + high UV', ['character/outfits/mild-2.png', 'character/modifiers/rain.png', 'character/modifiers/high-uv.png']],
         ['Cold + snow + high UV', ['character/outfits/cold-2.png', 'character/modifiers/snow.png', 'character/modifiers/high-uv.png']],
+        ['Cold + snow + rain umbrella', ['character/outfits/cold-2.png', 'character/modifiers/snow.png', 'character/modifiers/umbrella.png']],
       ].forEach(([label, sources]) => document.querySelector('#combined').append(card(label, sources)));
+      [
+        ['Mild base + snow and umbrella redraws', ['character/outfits/mild-2.png', 'reference/umbrella-redraw-preview.png', 'reference/snow-redraw-preview.png']],
+        ['Cold base + snow and umbrella redraws', ['character/outfits/cold-2.png', 'reference/umbrella-redraw-preview.png', 'reference/snow-redraw-preview.png']],
+      ].forEach(([label, sources]) => document.querySelector('#snow-redraw').append(card(label, sources)));
       weatherIcons.forEach((name) => document.querySelector('#weather-icons').append(card(name, [`icons/weather/${name}.svg`], 'icon-card')));
       reminderIcons.forEach((name) => document.querySelector('#reminder-icons').append(card(name, [`icons/reminders/${name}.svg`], 'icon-card')));
       interfaceIcons.forEach((name) => document.querySelector('#interface-icons').append(card(name, [`icons/interface/${name}.svg`], 'icon-card')));
