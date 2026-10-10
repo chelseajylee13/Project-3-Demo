@@ -1,4 +1,7 @@
 import { SCREENS } from '../domain/screens.js';
+import logoUrl from '../assets/delivery/brand/pupcast-logo.png';
+import { assetUrl } from './assetUrl.js';
+import { renderHome } from './renderHome.js';
 
 function createElement(tagName, options = {}) {
   const element = document.createElement(tagName);
@@ -18,9 +21,12 @@ function createBrand() {
   const brand = createElement('div', { className: 'brand' });
   const mark = createElement('span', {
     className: 'brand__mark',
-    text: '🐶',
     attributes: { 'aria-hidden': 'true' },
   });
+  mark.append(createElement('img', {
+    className: 'brand__logo',
+    attributes: { src: logoUrl, alt: '', width: '160', height: '160' },
+  }));
   const copy = createElement('div');
   copy.append(
     createElement('p', { className: 'brand__name', text: 'PUPCAST' }),
@@ -67,193 +73,18 @@ function createHeader(activeScreen) {
   return header;
 }
 
-function createMascotPlaceholder() {
-  const figure = createElement('figure', { className: 'mascot-placeholder' });
-  const illustration = createElement('div', {
-    className: 'mascot-placeholder__illustration',
-    attributes: { role: 'img', 'aria-label': 'PUPCAST mascot artwork placeholder' },
-  });
-  illustration.append(
-    createElement('span', {
-      className: 'mascot-placeholder__face',
-      text: '🐶',
-      attributes: { 'aria-hidden': 'true' },
-    }),
-    createElement('span', {
-      className: 'mascot-placeholder__shirt',
-      text: 'PUPCAST',
-      attributes: { 'aria-hidden': 'true' },
-    }),
-  );
-  figure.append(illustration);
-  return figure;
-}
-
-function createFirstUsePanel(state) {
-  const section = createElement('section', {
-    className: 'first-use-panel',
-    attributes: { 'aria-labelledby': 'first-use-heading' },
-  });
-  const copy = createElement('div', { className: 'first-use-panel__copy' });
-  copy.append(
-    createElement('p', { className: 'eyebrow', text: 'Weather-ready starts here' }),
-    createElement('h1', {
-      text: 'What should you wear today?',
-      attributes: { id: 'first-use-heading' },
-    }),
-    createElement('p', { className: 'lede', text: state.status.message }),
-  );
-
-  const prompt = createElement('div', {
-    className: 'location-prompt',
-    attributes: { role: 'status', 'aria-live': 'polite' },
-  });
-  prompt.append(
-    createElement('span', {
-      className: 'location-prompt__icon',
-      text: '⌖',
-      attributes: { 'aria-hidden': 'true' },
-    }),
-    createElement('div', { className: 'location-prompt__text' }),
-  );
-  prompt.lastElementChild.append(
-    createElement('strong', { text: state.location?.label ?? 'No location selected' }),
-    createElement('span', {
-      text: state.status.message,
-    }),
-  );
-  copy.append(prompt);
-  section.append(createMascotPlaceholder(), copy);
-  return section;
-}
-
-function createPreviewCard(title, text, modifier = '') {
-  const article = createElement('article', {
-    className: `preview-card ${modifier}`.trim(),
-  });
-  article.append(
-    createElement('h2', { text: title }),
-    createElement('p', { text }),
-  );
+function createAboutCard(title, paragraphs, links = []) {
+  const article = createElement('article', { className: 'about-card' });
+  article.append(createElement('h2', { text: title }));
+  paragraphs.forEach((copy) => article.append(createElement('p', { text: copy })));
+  links.forEach(([label, href]) => article.append(createElement('a', {
+    text: label,
+    attributes: { href, rel: 'noreferrer' },
+  })));
   return article;
 }
 
-function createWeatherControls(state) {
-  const section = createElement('section', {
-    className: 'weather-controls preview-card',
-    attributes: { 'aria-labelledby': 'weather-controls-heading' },
-  });
-  section.append(createElement('h2', { text: 'Choose your weather location', attributes: { id: 'weather-controls-heading' } }));
-
-  const searchLabel = createElement('label', { text: 'US city or ZIP code', attributes: { for: 'location-search' } });
-  const searchInput = createElement('input', {
-    attributes: {
-      id: 'location-search', type: 'search', autocomplete: 'off',
-      placeholder: 'Austin, TX or 78701', value: state.search.query,
-      'aria-controls': 'location-results',
-    },
-  });
-  section.append(searchLabel, searchInput);
-
-  const actions = createElement('div', { className: 'weather-controls__actions' });
-  actions.append(createElement('button', {
-    text: state.status.kind === 'locating' ? 'Locating…' : 'Use my location',
-    attributes: { type: 'button', 'data-weather-action': 'locate',
-      ...(state.status.kind === 'locating' ? { disabled: '' } : {}) },
-  }));
-  if (state.location) {
-    actions.append(createElement('button', {
-      text: 'Retry weather',
-      attributes: { type: 'button', 'data-weather-action': 'retry' },
-    }));
-  }
-  section.append(actions);
-
-  const results = createElement('div', {
-    className: 'weather-controls__results',
-    attributes: { id: 'location-results', 'aria-label': 'Location search results' },
-  });
-  if (state.search.message) {
-    results.append(createElement('p', {
-      text: state.search.message,
-      attributes: { role: 'status', 'aria-live': 'polite' },
-    }));
-  }
-  state.search.results.forEach((location, index) => {
-    results.append(createElement('button', {
-      text: location.label,
-      attributes: { type: 'button', 'data-location-index': String(index) },
-    }));
-  });
-  section.append(results);
-
-  const status = createElement('p', {
-    className: 'weather-controls__status',
-    text: state.status.message,
-    attributes: { role: 'status', 'aria-live': 'polite' },
-  });
-  section.append(status);
-
-  if (state.model) {
-    const forecast = createElement('div', { className: 'weather-controls__forecast' });
-    const modelLabel = state.model.location.label;
-    forecast.append(createElement('h3', { text: `Seven-day forecast for ${modelLabel}` }));
-    if (state.status.kind === 'stale' || state.location?.label !== modelLabel) {
-      forecast.append(createElement('p', { text: 'Showing the last successful forecast.' }));
-    }
-    const dates = createElement('div', {
-      className: 'weather-controls__dates',
-      attributes: { 'aria-label': 'Forecast dates' },
-    });
-    state.model.days.forEach((day) => {
-      dates.append(createElement('button', {
-        text: new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' })
-          .format(new Date(`${day.date}T12:00:00Z`)),
-        attributes: {
-          type: 'button', 'data-forecast-date': day.date,
-          'aria-pressed': String(day.date === state.selectedDate),
-        },
-      }));
-    });
-    forecast.append(dates);
-    forecast.append(createElement('p', {
-      text: state.recommendation?.available
-        ? `Selected ${state.selectedDate}: ${state.recommendation.category} outfit guidance is ready.`
-        : `Selected ${state.selectedDate}: outfit guidance is unavailable because required weather data is missing.`,
-    }));
-    section.append(forecast);
-  }
-  return section;
-}
-
-function createHome(state) {
-  const main = createElement('main', {
-    className: 'page page--home',
-    attributes: { id: 'main-content', tabindex: '-1' },
-  });
-  const shell = createElement('div', { className: 'page-shell' });
-  shell.append(
-    createFirstUsePanel(state),
-    createWeatherControls(state),
-    createElement('section', {
-      className: 'preview-grid',
-      attributes: {
-        'aria-label': 'Recommendation sections available after choosing a location',
-      },
-    }),
-  );
-  const previewGrid = shell.lastElementChild;
-  previewGrid.append(
-    createPreviewCard('Weather summary', 'Current conditions and a seven-day selector will appear here.'),
-    createPreviewCard('Outfit recommendation', 'One shared recommendation state will coordinate the outfit and written guidance.'),
-    createPreviewCard('Reminders', 'Umbrella, water-resistant shoes, sunscreen, and water will stay visible here.'),
-    createPreviewCard('Forecast change', 'A meaningful shift during the campus day will be called out here.'),
-  );
-  main.append(shell);
-  return main;
-}
-
-function createAbout() {
+function createAbout(state) {
   const main = createElement('main', {
     className: 'page page--about',
     attributes: { id: 'main-content', tabindex: '-1' },
@@ -266,37 +97,65 @@ function createAbout() {
     attributes: { type: 'button', 'data-screen': SCREENS.HOME },
   });
   heading.append(
-    back,
     createElement('div', { className: 'about-heading__copy' }),
+    back,
   );
-  heading.lastElementChild.append(
+  heading.firstElementChild.append(
     createElement('p', { className: 'eyebrow', text: 'Meet your outfit buddy' }),
     createElement('h1', { text: 'About PUPCAST' }),
     createElement('p', {
       className: 'lede',
-      text: 'PUPCAST helps you dress for yourself with practical, weather-based outfit guidance.',
+      text: 'A little Bichon, a little forecast, and practical ideas for what to wear.',
     }),
   );
 
   const layout = createElement('div', { className: 'about-layout' });
   const artPanel = createElement('section', {
     className: 'about-art',
-    attributes: { 'aria-label': 'PUPCAST mascot preview' },
+    attributes: { 'aria-label': 'Your selected weather and PUPCAST mascot' },
   });
-  artPanel.append(
-    createElement('p', { text: 'What is your outfit going to be today?' }),
-    createMascotPlaceholder(),
-  );
+  artPanel.append(createElement('p', {
+    className: 'about-art__eyebrow', text: 'Your weather-ready buddy',
+  }));
+  const figure = createElement('figure', { className: 'about-art__figure' });
+  figure.append(createElement('img', {
+    className: 'about-art__mascot',
+    attributes: {
+      src: assetUrl(state.recommendation?.available
+        ? state.recommendation.outfit.asset : 'character/master-bichon.png'),
+      alt: state.recommendation?.available
+        ? state.recommendation.mascotAlt : 'PUPCAST Bichon Frise mascot',
+      width: '768', height: '1152',
+    },
+  }));
+  artPanel.append(figure);
+  let selectedWeather = 'Choose a location on Home to see your weather-ready look here.';
+  if (state.recommendation) {
+    const { summary } = state.recommendation;
+    const date = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+    }).format(new Date(`${summary.date}T12:00:00Z`));
+    selectedWeather = `${summary.location} · ${date} · ${summary.condition.label}`;
+  }
+  artPanel.append(createElement('p', {
+    className: 'about-art__weather', text: selectedWeather,
+  }));
 
   const topics = createElement('div', { className: 'about-topics' });
-  [
-    ['Created by', 'Chelsea Lee created the PUPCAST concept and visual direction.'],
-    ['Weather data', 'Open-Meteo will provide current conditions and forecasts.'],
-    ['How recommendations work', 'Temperature and weather conditions will drive practical outfit guidance.'],
-    ['Limitations', 'Recommendations are general comfort guidance, not safety or medical advice.'],
-    ['Privacy', 'The finished app will keep only one recent location in this browser.'],
-    ['Design, art, and AI assistance', 'Complete production credits will be recorded as assets are reviewed.'],
-  ].forEach(([title, text]) => topics.append(createPreviewCard(title, text)));
+  topics.append(
+    createAboutCard('Created by', ['Chelsea Lee created PUPCAST’s concept, name, visual direction, main laptop layout, and original Bichon design.']),
+    createAboutCard('Weather data', ['Open-Meteo supplies current weather and seven-day forecasts. This look follows your Home location and date.'], [['Open-Meteo ↗', 'https://open-meteo.com/']]),
+    createAboutCard('How recommendations work', ['Six outfit categories use daytime apparent temperature. Snow, rain, wind, high UV, or heat can change the complete outfit; other active conditions appear in written guidance and reminders. These thresholds are comfort heuristics.']),
+    createAboutCard('Guidance sources', ['Our weather-guidance thresholds draw on:'], [
+      ['EPA · UV ↗', 'https://www.epa.gov/sunsafety/uv-index-scale-0'],
+      ['NWS · rain and wind ↗', 'https://www.weather.gov/ppg/forecast_terms'],
+      ['CDC · heat ↗', 'https://www.cdc.gov/climate-health/php/resources/protect-yourself-from-the-dangers-of-extreme-heat.html'],
+      ['OSHA · cold ↗', 'https://www.osha.gov/winter-weather/cold-stress'],
+    ]),
+    createAboutCard('Limitations', ['Forecasts and comfort vary. This is not medical, emergency, or severe-weather safety advice; check official alerts and use your own judgment.']),
+    createAboutCard('Privacy', ['No accounts, analytics, ads, or app cookies. Only the last location label and coordinates are stored in this browser, replacing the previous one; the session works if storage is blocked. Device location is requested only when you choose it. Coordinates go to Open-Meteo for weather; it may log API requests, and GitHub Pages logs visitor IP addresses for security.']),
+    createAboutCard('Design, art, and AI assistance', ['Chelsea Lee directs and reviews the artwork; AI-assisted variations follow her original Bichon design. ChatGPT helped with responsive and state-design references based on her visual. Codex by OpenAI assisted with research, specification, planning, and code. Neither Open-Meteo nor OpenAI endorses PUPCAST.']),
+  );
 
   layout.append(artPanel, topics);
   shell.append(heading, layout);
@@ -307,7 +166,7 @@ function createAbout() {
 function createFooter() {
   const footer = createElement('footer', { className: 'site-footer' });
   const copy = createElement('p');
-  copy.append('Weather data will be provided by ');
+  copy.append('Weather data provided by ');
   const link = createElement('a', {
     text: 'Open-Meteo',
     attributes: { href: 'https://open-meteo.com/', rel: 'noreferrer' },
@@ -321,7 +180,7 @@ export function renderApp(state) {
   const fragment = document.createDocumentFragment();
   fragment.append(
     createHeader(state.screen),
-    state.screen === SCREENS.ABOUT ? createAbout() : createHome(state),
+    state.screen === SCREENS.ABOUT ? createAbout(state) : renderHome(state),
     createFooter(),
   );
   return fragment;

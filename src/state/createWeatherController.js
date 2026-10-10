@@ -1,4 +1,5 @@
 import { buildRecommendationState } from '../domain/buildRecommendationState.js';
+import { TEMPERATURE_UNITS } from '../domain/temperature.js';
 import { normalizeForecast } from '../domain/normalizeForecast.js';
 import { createInitialState } from './createInitialState.js';
 import { getDeviceLocation } from '../services/deviceLocation.js';
@@ -20,6 +21,7 @@ export function createWeatherController({
     ...createInitialState(),
     model: null,
     recommendation: null,
+    unit: TEMPERATURE_UNITS.FAHRENHEIT,
     search: Object.freeze({ query: '', results: [], kind: 'idle', message: '' }),
   });
   const listeners = new Set();
@@ -67,7 +69,7 @@ export function createWeatherController({
       update({
         model,
         selectedDate,
-        recommendation: buildRecommendationState(model, selectedDate),
+        recommendation: buildRecommendationState(model, selectedDate, state.unit),
         status: status('ready', `Weather updated for ${location.label}.`),
       });
       return state.recommendation;
@@ -155,7 +157,17 @@ export function createWeatherController({
 
   function selectDate(date) {
     if (!state.model?.days.some((day) => day.date === date)) return false;
-    update({ selectedDate: date, recommendation: buildRecommendationState(state.model, date) });
+    update({ selectedDate: date, recommendation: buildRecommendationState(state.model, date, state.unit) });
+    return true;
+  }
+
+  function selectUnit(unit) {
+    if (!Object.values(TEMPERATURE_UNITS).includes(unit)) return false;
+    update({
+      unit,
+      recommendation: state.model
+        ? buildRecommendationState(state.model, state.selectedDate, unit) : null,
+    });
     return true;
   }
 
@@ -178,6 +190,7 @@ export function createWeatherController({
     locate,
     search,
     selectDate,
+    selectUnit,
     retry: () => state.location ? loadForecast(state.location) : Promise.resolve(null),
     dispose,
   });

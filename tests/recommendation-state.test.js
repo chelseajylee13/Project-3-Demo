@@ -18,6 +18,36 @@ function stateFrom(payload, date = '2026-10-05', unit) {
 }
 
 describe('immutable recommendation state', () => {
+  it('converts a temperature-change callout when Celsius is selected', () => {
+    const fixture = createOpenMeteoFixture({
+      profiles: [{ apparent: (hour) => hour >= 14 ? 70 : 60, wind: 6 }],
+      current: { time: '2026-10-05T09:15', apparent: 60 },
+    });
+    const state = stateFrom(fixture, '2026-10-05', TEMPERATURE_UNITS.CELSIUS);
+
+    expect(state.forecastChange.type).toBe('temperature');
+    expect(state.forecastChange.text).toContain('6°C');
+  });
+
+  it('converts warming within a rain callout and keeps three separate messages', () => {
+    const fixture = createOpenMeteoFixture({
+      profiles: [{}, {
+        apparent: (hour) => hour >= 13 ? 72 : 60,
+        precipitation: (hour) => hour >= 14 && hour < 16 ? 40 : 10,
+        weatherCode: 61,
+        hourlyWeatherCode: 0,
+      }],
+    });
+    const state = stateFrom(fixture, '2026-10-06', TEMPERATURE_UNITS.CELSIUS);
+
+    expect(state.forecastChange.items.map(({ text }) => text)).toEqual([
+      'Rain may begin around 2 PM.',
+      'Rain may stop around 4 PM.',
+      'It may feel about 7°C warmer around 1 PM.',
+    ]);
+    expect(state.forecastChange.text).not.toContain('°F');
+  });
+
   it.each(Object.entries(CATEGORY_FIXTURES))('builds the %s category from fixture data', (category, payload) => {
     const state = stateFrom(payload);
 
@@ -53,6 +83,31 @@ describe('immutable recommendation state', () => {
     expect(state.mascotAlt).toContain('blue snow jacket');
     expect(state.mascotAlt).not.toContain('umbrella');
     expect(state).not.toHaveProperty('modifierAssets');
+  });
+
+  it('uses rain clothing and reminders when only the daily weather code reports rain', () => {
+    const state = stateFrom(createOpenMeteoFixture({
+      profiles: [{}, { apparent: 85, weatherCode: 61, hourlyWeatherCode: 0, precipitation: 10, uv: 4 }],
+    }), '2026-10-06');
+
+    expect(state.summary.condition.key).toBe('rain');
+    expect(state.outfit.asset).toBe('character/weather/rain-hot.png');
+    expect(state.reminders[0].active).toBe(true);
+    expect(state.reminders[1].active).toBe(true);
+    expect(state.forecastChange.type).toBe('rain-timing-unavailable');
+  });
+
+  it('uses the current rain code on today and a daily snow code on a future date', () => {
+    const fixture = createOpenMeteoFixture({
+      profiles: [
+        { apparent: 75, weatherCode: 0, hourlyWeatherCode: 0, precipitation: 10 },
+        { apparent: 30, weatherCode: 71, hourlyWeatherCode: 0, snowfall: 0 },
+      ],
+      current: { weatherCode: 61 },
+    });
+
+    expect(stateFrom(fixture).outfit.asset).toBe('character/weather/rain-warm.png');
+    expect(stateFrom(fixture, '2026-10-06').outfit.asset).toBe('character/weather/snow-cold.png');
   });
 
   it('uses one complete rain or snow look and retains appropriate reminders', () => {

@@ -17,6 +17,6 @@
   --radius-medium: 1rem;
   --radius-large: 1.5rem;
   --content-width: 75rem;
-  --font-body: Inter, ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --font-body: Nunito, "Segoe UI", system-ui, sans-serif;
   --transition-fast: 160ms ease;
 }

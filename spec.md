@@ -81,9 +81,9 @@ The reminder area always shows four labeled, non-interactive cards: umbrella, wa
 
 ### R6. Forecast Change feature
 
-The callout evaluates 8:00 AM–8:00 PM in the location's local time. For today, it compares upcoming hours with the current hour; for a future date, it compares later hours with 8:00 AM. It reports the approximate first time that precipitation probability crosses from below 30% to at least 30%, snow begins, or apparent temperature differs from the baseline by at least 10°F. Snow or rain takes priority over temperature. If no threshold is crossed, it says conditions should stay fairly steady. UV alone does not trigger the callout.
+The callout evaluates 8:00 AM–8:00 PM in the location's local time. For today, it compares upcoming hours with the current hour; for a future date, it compares later hours with 8:00 AM. Rain is considered likely when an hourly rain weather code is reported or precipitation probability reaches 30%. The callout reports the first supported rain start and stop transitions in that window, or the first time snow begins. A daily rain code without a supported hourly transition produces an explicit timing-unavailable message, never an invented hour. Rain or snow leads the callout; a meaningful apparent-temperature change of at least 10°F may follow as a separate bullet sentence. The temperature difference uses the selected display unit. If no event is supported, it says conditions should stay fairly steady. UV alone does not trigger the callout.
 
-**Acceptance check:** Use fixtures for rain, snow, warming, cooling, competing precipitation and temperature changes, high UV only, and no meaningful change. Confirm the expected priority, direction, approximate time, and steady-state wording.
+**Acceptance check:** Use fixtures for rain start, rain stop, a complete rain interval, daily rain without hourly timing, snow, warming, cooling, competing precipitation and temperature changes, high UV only, and no meaningful change. Confirm the expected priority, direction, approximate time, timing-unavailable, and steady-state wording.
 
 ### R7. Responsive layout and navigation
 
@@ -140,8 +140,8 @@ The app is a static browser application deployed to a public GitHub Pages HTTPS 
 
    | Modifier | Trigger | Required effects |
    | --- | --- | --- |
-   | Rain | Maximum hourly precipitation probability ≥30% | Integrated rain shell, umbrella, and water-resistant shoes when primary; rain condition treatment and umbrella/shoe reminders whenever active |
-   | Snow | Any reported snowfall or snow-related weather code | Integrated insulated outerwear and waterproof boots when primary; snow condition treatment, shoe reminder, and snow guidance whenever active |
+   | Rain | Current (for today), daily, or hourly rain weather code, or maximum hourly precipitation probability ≥30% | Integrated rain shell, umbrella, and water-resistant shoes when primary; rain condition treatment and umbrella/shoe reminders whenever active |
+   | Snow | Any reported snowfall or current (for today), daily, or hourly snow-related weather code | Integrated insulated outerwear and waterproof boots when primary; snow condition treatment, shoe reminder, and snow guidance whenever active |
    | High UV | Daily maximum UV index ≥3 | Sunglasses worn over both eyes, with a sun hat where temperature-appropriate, when primary; sunscreen reminder whenever active |
    | Heat | Any hourly apparent temperature ≥80°F | Visible water bottle when primary; hydration reminder whenever active |
    | Wind | Maximum sustained hourly wind ≥15 mph | Integrated wind-resistant outer layer when primary; matching written guidance whenever active |
@@ -190,8 +190,12 @@ Reference images 01–09 and AI-assisted concept images 10–17 are inspiration 
 
 ### Production asset record
 
+The approved full-resolution PNGs below remain the production masters. The app now references mechanically resized transparent PNG delivery copies in `src/assets/delivery/`: 768 × 1152 for the master and complete outfits, and 160 × 160 for the logo. `scripts/create-delivery-pngs.ps1` records the repeatable resize method; visual review of the delivery copies is pending. This addresses the 2026-10-10 production-preview Lighthouse payload finding without changing the approved source artwork.
+
 | File | Dimensions | Production method | Review and credit |
 | --- | --- | --- | --- |
+| `src/assets/brand/pupcast-logo.png` | 2000 × 2000 transparent PNG | Developer-supplied PUPCAST Bichon-face logo; upstream production method not independently verified | Supplied and approved by Chelsea Lee on 2026-10-10 for the shared Home/About header. The adjacent PUPCAST wordmark provides the accessible name, so the image uses empty alternative text. |
+| `src/assets/fonts/nunito/variable/nunito-latin-wght-{normal,italic}.woff2` | Variable Latin WOFF2 fonts, 200–900 weight range | Developer-supplied Fontsource Nunito ZIP; original Nunito Project Authors | Chelsea Lee selected Nunito for the site-wide typeface on 2026-10-10. SIL Open Font License 1.1; source license retained at `src/assets/fonts/nunito/LICENSE` and distributed at `public/licenses/Nunito-OFL.txt`. Font files are self-hosted; no third-party font request is made. |
 | `src/assets/character/master-bichon.png` | 1024 × 1536 transparent PNG | Built-in OpenAI image generation using drawing 35 as Chelsea Lee's character-design anchor, followed by a transparency-cleanup edit | Reviewed and approved by Chelsea Lee on 2026-10-05. Original character design and visual direction by Chelsea Lee; AI-assisted production disclosed under R10. |
 | `src/assets/character/outfits/hot-1.png` through `hot-3.png` | 1024 × 1536 transparent PNGs | Built-in OpenAI identity-preserving edits of the approved master; variation 3 received a Developer-directed Hawaiian-shirt revision | Reviewed and approved by Chelsea Lee on 2026-10-05. Original character and outfit direction by Chelsea Lee; AI-assisted production disclosed under R10. |
 | `src/assets/character/outfits/warm-1.png` through `warm-3.png` | 1024 × 1536 transparent PNGs | Built-in OpenAI identity-preserving edits of the approved master | Reviewed and approved by Chelsea Lee on 2026-10-05. Original character and outfit direction by Chelsea Lee; AI-assisted production disclosed under R10. |
@@ -228,6 +232,9 @@ The Developer rejected all composited modifier overlays after stacked review. A 
 
 ## Revisions
 
+- 2026-10-10: Chelsea Lee supplied and approved the transparent Bichon-face PUPCAST logo for the shared Home/About header, replacing the temporary emoji. The original 2000 × 2000 PNG is retained without generative edits; CSS sizes it for phone and laptop headers.
+- 2026-10-10: Chelsea Lee requested that every Forecast Change sentence appear on its own bullet line and that temperature differences follow the selected °F/°C setting even when rain timing is also reported. The callout now carries separate message items so presentation and conversion do not depend on splitting or replacing an aggregated paragraph.
+- 2026-10-10: Chelsea Lee observed a rainy daily forecast paired with a non-rain outfit and inactive rain reminders. The approved rain trigger now includes daily and hourly rain weather codes, in addition to the existing hourly probability threshold. Forecast Change now reports supported hourly rain start/stop transitions, states when timing is unavailable, and may add a meaningful temperature shift after the rain message. No start or stop time is inferred from a daily code alone.
 - 2026-10-05: Initial specification draft reconciled the approved research, Developer decisions, and hand-drawn references. Interpretation notes resolve remaining placeholder conflicts in the drawings.
 
 After implementation or testing, record requirement changes and the evidence that prompted them. Update the screen drawings when a material layout or interaction changes.

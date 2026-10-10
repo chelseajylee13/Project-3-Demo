@@ -1,10 +1,21 @@
 import { SCREENS, isScreen } from '../domain/screens.js';
 import { createInitialState } from '../state/createInitialState.js';
 import { createWeatherController } from '../state/createWeatherController.js';
+import { createLocationDialog } from './createLocationDialog.js';
 import { renderApp } from './renderApp.js';
 
 export function createApp(root, weather = createWeatherController()) {
   let state = Object.freeze({ ...createInitialState(), ...weather.getState() });
+  const viewRoot = document.createElement('div');
+  const locationDialog = createLocationDialog(weather, () => state);
+  const politeAnnouncer = document.createElement('div');
+  politeAnnouncer.className = 'visually-hidden';
+  politeAnnouncer.setAttribute('role', 'status');
+  const urgentAnnouncer = document.createElement('div');
+  urgentAnnouncer.className = 'visually-hidden';
+  urgentAnnouncer.setAttribute('role', 'alert');
+  root.replaceChildren(viewRoot, locationDialog.element, politeAnnouncer, urgentAnnouncer);
+  let lastAnnouncement = null;
 
   function navigate(screen) {
     if (!isScreen(screen) || screen === state.screen) {
@@ -14,42 +25,43 @@ export function createApp(root, weather = createWeatherController()) {
     state = Object.freeze({ ...state, screen });
     render();
     document.querySelector('#main-content')?.focus();
+    window.scrollTo?.(0, 0);
   }
 
   function render() {
-    const searchHadFocus = document.activeElement?.id === 'location-search';
-    const selectionStart = searchHadFocus ? document.activeElement.selectionStart : null;
-    const selectionEnd = searchHadFocus ? document.activeElement.selectionEnd : null;
-    root.replaceChildren(renderApp(state));
-
-    if (searchHadFocus) {
-      const input = root.querySelector('#location-search');
-      input?.focus();
-      if (selectionStart !== null && selectionEnd !== null) {
-        input?.setSelectionRange(selectionStart, selectionEnd);
-      }
+    viewRoot.replaceChildren(renderApp(state));
+    locationDialog.update(state);
+    const announcement = `${state.status.kind}:${state.status.message}`;
+    if (announcement !== lastAnnouncement) {
+      const urgent = ['error', 'stale', 'location-denied', 'location-timeout', 'location-unavailable']
+        .includes(state.status.kind);
+      politeAnnouncer.textContent = urgent ? '' : state.status.message;
+      urgentAnnouncer.textContent = urgent ? state.status.message : '';
+      lastAnnouncement = announcement;
     }
 
-    root.querySelectorAll('[data-screen]').forEach((control) => {
+    viewRoot.querySelectorAll('[data-screen]').forEach((control) => {
       control.addEventListener('click', () => navigate(control.dataset.screen));
     });
-    root.querySelector('#location-search')?.addEventListener('input', (event) => {
-      void weather.search(event.target.value);
-    });
-    root.querySelectorAll('[data-location-index]').forEach((control) => {
+    viewRoot.querySelectorAll('[data-location-dialog-open]').forEach((control) => {
       control.addEventListener('click', () => {
-        const location = state.search.results[Number(control.dataset.locationIndex)];
-        if (location) void weather.selectLocation(location);
+        locationDialog.open(control);
       });
     });
-    root.querySelector('[data-weather-action="locate"]')?.addEventListener('click', () => {
-      void weather.locate();
-    });
-    root.querySelector('[data-weather-action="retry"]')?.addEventListener('click', () => {
+    viewRoot.querySelector('[data-weather-action="retry"]')?.addEventListener('click', () => {
       void weather.retry();
     });
-    root.querySelectorAll('[data-forecast-date]').forEach((control) => {
+    viewRoot.querySelectorAll('[data-forecast-date]').forEach((control) => {
       control.addEventListener('click', () => weather.selectDate(control.dataset.forecastDate));
+    });
+    viewRoot.querySelector('[data-date-shortcut]')?.addEventListener('click', () => {
+      const selected = viewRoot.querySelector('.date-selector [aria-pressed="true"]');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      selected?.scrollIntoView({ block: 'center', behavior: reducedMotion ? 'auto' : 'smooth' });
+      selected?.focus({ preventScroll: true });
+    });
+    viewRoot.querySelectorAll('[data-temperature-unit]').forEach((control) => {
+      control.addEventListener('click', () => weather.selectUnit(control.dataset.temperatureUnit));
     });
   }
 
@@ -68,6 +80,7 @@ export function createApp(root, weather = createWeatherController()) {
     selectLocation: weather.selectLocation,
     useDeviceLocation: weather.locate,
     selectDate: weather.selectDate,
+    selectUnit: weather.selectUnit,
     retry: weather.retry,
     dispose() {
       unsubscribe();

@@ -33,6 +33,41 @@ describe('Forecast Change', () => {
     expect(result.text).toContain('11 AM');
   });
 
+  it('reports a supported rain start and stop using hourly weather codes', () => {
+    const result = evaluateForecastChange({
+      day: { ...createDay({ weatherCode: (hour) => hour >= 11 && hour < 16 ? 61 : 0 }), weatherCode: 61 },
+      isToday: false,
+      current: null,
+    });
+
+    expect(result).toMatchObject({ type: 'rain', localHour: 11 });
+    expect(result.text).toContain('begin around 11 AM');
+    expect(result.text).toContain('stop around 4 PM');
+  });
+
+  it('reports a stop when rain is already underway at the baseline', () => {
+    const result = evaluateForecastChange({
+      day: createDay({ precipitation: (hour) => hour < 12 ? 45 : 10 }),
+      isToday: false,
+      current: null,
+    });
+
+    expect(result.type).toBe('rain');
+    expect(result.text).toBe('Rain may stop around 12 PM.');
+  });
+
+  it('does not invent a rain time from a daily rain code', () => {
+    const result = evaluateForecastChange({
+      day: { ...createDay({ apparent: (hour) => hour >= 14 ? 72 : 60 }), weatherCode: 61 },
+      isToday: false,
+      current: null,
+    });
+
+    expect(result.type).toBe('rain-timing-unavailable');
+    expect(result.text).toContain('hourly start and stop times are unavailable');
+    expect(result.text).toContain('12°F warmer around 2 PM');
+  });
+
   it('reports when snow begins', () => {
     const result = evaluateForecastChange({
       day: createDay({ snowfall: (hour) => (hour >= 13 ? 0.1 : 0) }),
@@ -86,10 +121,11 @@ describe('Forecast Change', () => {
       current: null,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       type: 'steady',
       time: null,
       text: 'Conditions should stay fairly steady.',
     });
+    expect(result.items).toEqual([{ kind: 'steady', text: result.text }]);
   });
 });

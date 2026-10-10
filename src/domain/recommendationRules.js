@@ -1,4 +1,4 @@
-import { isSnowCode } from './weatherCodes.js';
+import { isRainCode, isSnowCode } from './weatherCodes.js';
 
 export const CATEGORIES = Object.freeze({
   HOT: 'hot',
@@ -37,7 +37,7 @@ export function selectTemperatureCategory(averageApparentTemperatureF) {
   return CATEGORIES.VERY_COLD;
 }
 
-export function evaluateDay(day) {
+export function evaluateDay(day, currentWeatherCode = null) {
   const hours = getEvaluationHours(day);
   const apparentTemperatures = hours.map((hour) => hour.apparentTemperatureF);
   const precipitationProbabilities = hours
@@ -49,13 +49,16 @@ export function evaluateDay(day) {
     ? Math.max(...precipitationProbabilities)
     : null;
   const maxWindSpeedMph = windSpeeds.length ? Math.max(...windSpeeds) : null;
-  const hasSnow = hours.some((hour) => (
+  const hasSnow = isSnowCode(day.weatherCode) || isSnowCode(currentWeatherCode)
+    || hours.some((hour) => (
     (Number.isFinite(hour.snowfallInches) && hour.snowfallInches > 0)
     || isSnowCode(hour.weatherCode)
   ));
 
   const modifiers = Object.freeze({
-    rain: Number.isFinite(maxPrecipitationProbability) && maxPrecipitationProbability >= 30,
+    rain: isRainCode(day.weatherCode) || isRainCode(currentWeatherCode)
+      || hours.some((hour) => isRainCode(hour.weatherCode))
+      || (Number.isFinite(maxPrecipitationProbability) && maxPrecipitationProbability >= 30),
     snow: hasSnow,
     highUv: Number.isFinite(day.uvIndexMax) && day.uvIndexMax >= 3,
     heat: apparentTemperatures.some((value) => Number.isFinite(value) && value >= 80),

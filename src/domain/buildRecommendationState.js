@@ -82,6 +82,24 @@ function createSummary(model, day, evaluation, unit, isToday) {
   };
 }
 
+function displayForecastChange(change, unit) {
+  if (unit !== TEMPERATURE_UNITS.CELSIUS) return change;
+  const items = change.items.map((item) => {
+    if (item.kind !== 'temperature') return item;
+    const fahrenheitDelta = Math.round(Math.abs(item.differenceF));
+    const celsiusDelta = Math.round(Math.abs(item.differenceF) * (5 / 9));
+    return {
+      ...item,
+      text: item.text.replace(`${fahrenheitDelta}\u00b0F`, `${celsiusDelta}\u00b0C`),
+    };
+  });
+  return {
+    ...change,
+    items,
+    text: items.map(({ text }) => text).join(' '),
+  };
+}
+
 export function buildRecommendationState(
   model,
   selectedDate,
@@ -94,7 +112,7 @@ export function buildRecommendationState(
   }
 
   const isToday = model.current.time?.slice(0, 10) === selectedDate;
-  const evaluation = evaluateDay(day);
+  const evaluation = evaluateDay(day, isToday ? model.current.weatherCode : null);
   const condition = selectVisualCondition(day, model.current, isToday, evaluation.modifiers);
   const variationContext = {
     latitude: model.location.latitude,
@@ -107,7 +125,9 @@ export function buildRecommendationState(
     createReminder('sunscreen', evaluation.modifiers.highUv, variationContext),
     createReminder('hydration', evaluation.modifiers.heat, variationContext),
   ];
-  const forecastChange = evaluateForecastChange({ day, isToday, current: model.current });
+  const forecastChange = displayForecastChange(
+    evaluateForecastChange({ day, isToday, current: model.current }), unit,
+  );
 
   const unavailableReason = !evaluation.category
     ? 'missing-apparent-temperature'

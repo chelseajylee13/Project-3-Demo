@@ -29,10 +29,20 @@
   },
   "optimization": {
     "status": "reviewed",
-    "method": "Retained the source 1024x1536 PNGs because a lossless System.Drawing re-encode increased representative file sizes by 30-39%; Vite will fingerprint the files and the browser loads only the selected complete outfit and relevant icons.",
+    "method": "Approved 1024x1536 PNG masters remain unchanged. For app delivery, System.Drawing HighQualityBicubic generates 768x1152 transparent PNG character copies and a 160x160 transparent PNG logo copy in src/assets/delivery/. Vite fingerprints and ships only the delivery copies referenced by the app. Visual review of these resized copies is pending.",
     "svgMethod": "Hand-authored SVGs use compact paths, a shared 64x64 or 24x24 viewBox, and no embedded metadata."
   },
   "groups": {
+    "brandLogo": {
+      "status": "developer-approved",
+      "file": "brand/pupcast-logo.png",
+      "dimensions": "2000x2000",
+      "format": "transparent PNG",
+      "productionMethod": "Supplied by Chelsea Lee for the PUPCAST header; upstream production method not independently verified.",
+      "reviewedBy": "Chelsea Lee",
+      "reviewedOn": "2026-10-10",
+      "altGuidance": "Use empty alt text in the header because the adjacent PUPCAST wordmark names the brand."
+    },
     "masterCharacter": {
       "status": "approved",
       "file": "character/master-bichon.png",

@@ -43,6 +43,21 @@ describe('weather data controller', () => {
     controller.dispose();
   });
 
+  it('converts displayed temperatures without changing the outfit category', async () => {
+    const controller = createWeatherController({
+      loadLocation: () => austin,
+      requestForecast: async () => createOpenMeteoFixture(),
+    });
+    await controller.restore();
+    const originalAsset = controller.getState().recommendation.outfit.asset;
+
+    expect(controller.selectUnit('C')).toBe(true);
+    expect(controller.getState().recommendation.summary.temperatures.current.text).toBe('17°C');
+    expect(controller.getState().recommendation.outfit.asset).toBe(originalAsset);
+    expect(controller.selectUnit('K')).toBe(false);
+    controller.dispose();
+  });
+
   it('saves the selected location and retains stale weather when Retry fails', async () => {
     const saveLocation = vi.fn();
     const requestForecast = vi.fn()
@@ -61,6 +76,39 @@ describe('weather data controller', () => {
     await controller.retry();
     expect(controller.getState().status.kind).toBe('ready');
     expect(controller.getState().recommendation.category).toBe('warm');
+    controller.dispose();
+  });
+
+  it('exposes loading, updating, and service-failure states without hiding completed weather', async () => {
+    const first = deferred();
+    const second = deferred();
+    const third = deferred();
+    const requestForecast = vi.fn()
+      .mockReturnValueOnce(first.promise)
+      .mockReturnValueOnce(second.promise)
+      .mockReturnValueOnce(third.promise);
+    const controller = createWeatherController({ requestForecast, saveLocation: () => true });
+
+    const initialLoad = controller.selectLocation(austin);
+    expect(controller.getState().status.kind).toBe('loading');
+    expect(controller.getState().recommendation).toBeNull();
+    first.reject(new Error('offline'));
+    await initialLoad;
+    expect(controller.getState().status.kind).toBe('error');
+
+    const retry = controller.retry();
+    expect(controller.getState().status.kind).toBe('loading');
+    second.resolve(createOpenMeteoFixture());
+    await retry;
+    const completed = controller.getState().recommendation;
+
+    const update = controller.retry();
+    expect(controller.getState().status.kind).toBe('updating');
+    expect(controller.getState().recommendation).toBe(completed);
+    third.reject(new Error('offline'));
+    await update;
+    expect(controller.getState().status.kind).toBe('stale');
+    expect(controller.getState().recommendation).toBe(completed);
     controller.dispose();
   });
 
