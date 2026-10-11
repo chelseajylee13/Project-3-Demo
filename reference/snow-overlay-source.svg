@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1536" viewBox="0 0 1024 1536">
+  <defs>
+    <linearGradient id="jacket" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4e86e8"/>
+      <stop offset="0.55" stop-color="#2763c6"/>
+      <stop offset="1" stop-color="#15458f"/>
+    </linearGradient>
+    <linearGradient id="boot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a6679"/>
+      <stop offset="1" stop-color="#263246"/>
+    </linearGradient>
+    <style>
+      .outline { stroke: #172035; stroke-width: 13; stroke-linejoin: round; stroke-linecap: round; }
+      .seam { fill: none; stroke: #133e82; stroke-width: 7; stroke-linejoin: round; stroke-linecap: round; }
+      .highlight { fill: none; stroke: #9dbdf1; stroke-width: 12; stroke-linecap: round; }
+    </style>
+  </defs>
+
+  <!-- Left open jacket panel and sleeve wrap around the common mascot pose. -->
+  <path class="outline" fill="url(#jacket)" d="M369 759 Q329 768 291 802 Q240 822 204 884 L153 973 Q141 1007 163 1034 Q185 1058 218 1048 L278 1025 Q305 1020 323 1002 L291 1201 Q278 1252 311 1272 Q363 1306 432 1290 L459 1058 Q461 922 446 799 Q428 769 369 759Z"/>
+  <path class="outline" fill="#1b4d9d" d="M148 988 Q176 1012 218 1027 Q260 1037 300 1012 L291 1051 Q264 1073 221 1067 Q179 1064 154 1038Z"/>
+  <path class="seam" d="M292 814 Q318 900 323 1002 M324 1022 Q314 1136 291 1203 M428 798 Q434 1003 414 1268"/>
+  <path class="highlight" d="M321 789 Q275 815 247 863 M173 952 Q164 981 170 1001 M337 1082 Q324 1195 322 1231"/>
+  <path class="outline" fill="#dce9fb" d="M438 783 Q459 797 470 817 L455 1083 Q447 1186 433 1284 L407 1290 Q425 1134 428 1000 Q430 884 419 794Z"/>
+
+  <!-- Right panel mirrors the left while keeping the middle outfit transparent. -->
+  <path class="outline" fill="url(#jacket)" d="M655 759 Q695 768 733 802 Q784 822 820 884 L871 973 Q883 1007 861 1034 Q839 1058 806 1048 L746 1025 Q719 1020 701 1002 L733 1201 Q746 1252 713 1272 Q661 1306 592 1290 L565 1058 Q563 922 578 799 Q596 769 655 759Z"/>
+  <path class="outline" fill="#1b4d9d" d="M876 988 Q848 1012 806 1027 Q764 1037 724 1012 L733 1051 Q760 1073 803 1067 Q845 1064 870 1038Z"/>
+  <path class="seam" d="M732 814 Q706 900 701 1002 M700 1022 Q710 1136 733 1203 M596 798 Q590 1003 610 1268"/>
+  <path class="highlight" d="M703 789 Q749 815 777 863 M851 952 Q860 981 854 1001 M687 1082 Q700 1195 702 1231"/>
+  <path class="outline" fill="#dce9fb" d="M586 783 Q565 797 554 817 L569 1083 Q577 1186 591 1284 L617 1290 Q599 1134 596 1000 Q594 884 605 794Z"/>
+
+  <!-- Waterproof boot covers align with the approved shared foot baseline. -->
+  <path class="outline" fill="url(#boot)" d="M298 1304 Q339 1280 411 1295 L468 1315 L472 1422 Q471 1465 440 1480 L260 1480 Q228 1467 230 1431 Q238 1386 273 1353Z"/>
+  <path class="outline" fill="url(#boot)" d="M726 1304 Q685 1280 613 1295 L556 1315 L552 1422 Q553 1465 584 1480 L764 1480 Q796 1467 794 1431 Q786 1386 751 1353Z"/>
+  <path fill="#e4ecf5" stroke="#172035" stroke-width="9" d="M282 1308 Q347 1279 445 1317 L445 1342 Q357 1321 281 1347Z M742 1308 Q677 1279 579 1317 L579 1342 Q667 1321 743 1347Z"/>
+  <path class="seam" d="M270 1447 Q347 1459 447 1446 M754 1447 Q677 1459 577 1446"/>
+  <path class="highlight" d="M275 1394 Q307 1366 365 1372 M749 1394 Q717 1366 659 1372"/>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1536" viewBox="0 0 1024 1536">
+  <defs>
+    <linearGradient id="canopy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffa08f"/>
+      <stop offset="0.55" stop-color="#ff7869"/>
+      <stop offset="1" stop-color="#e84e51"/>
+    </linearGradient>
+    <linearGradient id="shaft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#172035"/>
+      <stop offset="0.48" stop-color="#58677c"/>
+      <stop offset="1" stop-color="#172035"/>
+    </linearGradient>
+  </defs>
+
+  <!-- The shaft runs beside the face and finishes at the right paw. -->
+  <path d="M819 395 Q834 605 830 798 Q830 934 807 1070" fill="none" stroke="#172035" stroke-width="24" stroke-linecap="round"/>
+  <path d="M819 395 Q834 605 830 798 Q830 934 807 1070" fill="none" stroke="url(#shaft)" stroke-width="15" stroke-linecap="round"/>
+
+  <!-- A smaller canopy shelters the mascot without covering its eyes. -->
+  <path d="M215 363 Q365 161 592 147 Q825 131 971 344 Q960 378 927 396 Q887 367 838 394 Q792 368 739 398 Q685 372 632 402 Q574 377 520 408 Q467 379 413 412 Q351 380 298 422 Q257 390 215 363Z" fill="url(#canopy)" stroke="#172035" stroke-width="14" stroke-linejoin="round"/>
+  <path d="M215 363 Q391 286 520 408 M215 363 Q488 153 632 402 M592 147 Q734 238 739 398 M592 147 Q879 169 838 394 M592 147 Q966 195 927 396" fill="none" stroke="#ad333d" stroke-width="6" opacity="0.62"/>
+  <path d="M348 264 Q417 201 516 184 M678 168 Q823 195 894 282" fill="none" stroke="#fff2e8" stroke-width="15" stroke-linecap="round"/>
+  <circle cx="592" cy="145" r="16" fill="#172035"/>
+  <circle cx="215" cy="363" r="8" fill="#172035"/>
+  <circle cx="298" cy="422" r="8" fill="#172035"/>
+  <circle cx="413" cy="412" r="8" fill="#172035"/>
+  <circle cx="520" cy="408" r="8" fill="#172035"/>
+  <circle cx="632" cy="402" r="8" fill="#172035"/>
+  <circle cx="739" cy="398" r="8" fill="#172035"/>
+  <circle cx="838" cy="394" r="8" fill="#172035"/>
+  <circle cx="927" cy="396" r="8" fill="#172035"/>
+
+  <!-- The curved grip ends where the right paw meets the snow sleeve. -->
+  <path d="M807 1054 Q805 1109 832 1117 Q859 1123 871 1087" fill="none" stroke="#172035" stroke-width="31" stroke-linecap="round"/>
+  <path d="M807 1054 Q805 1109 832 1117 Q859 1123 871 1087" fill="none" stroke="#ff7869" stroke-width="21" stroke-linecap="round"/>
+  <path d="M807 1063 Q814 1093 829 1098" fill="none" stroke="#ffc1b2" stroke-width="8" stroke-linecap="round"/>
+</svg>
