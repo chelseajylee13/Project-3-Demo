@@ -119,6 +119,8 @@ PUPCAST has no accounts, analytics, advertising, or application cookies. It stor
 
 The app is a static browser application deployed to a public GitHub Pages HTTPS URL. No secret API key is shipped to the browser. Open-Meteo's prototype terms and license must be reviewed before any commercial Client campaign.
 
+Production URL: https://chelseajylee13.github.io/Project-3-Demo/. Deployment method: a push to `main` runs `.github/workflows/deploy-pages.yml`, which installs dependencies, runs the tests, builds `dist/`, and publishes that directory with GitHub Actions. The first successful workflow was [run 38095923911](https://github.com/chelseajylee13/Project-3-Demo/actions/runs/38095923911) for revision `a584a2a`; public-page and real-device acceptance checks are tracked in `plan.md`.
+
 **Acceptance check:** Load the public URL on a real phone and laptop, confirm HTTPS and device-location availability, inspect the built files for secrets, and repeat the core location, date, recommendation, About, and error checks against the deployed version.
 
 ## Recommendation state and data flow
