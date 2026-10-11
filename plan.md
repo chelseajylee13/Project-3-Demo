@@ -118,7 +118,7 @@ Main risks are inconsistent or late artwork, incorrect timezone/date slicing, in
 - [x] Verify that asset paths, routing, Open-Meteo requests, Retry, storage, and device geolocation work from the deployed subpath and secure context
 - [x] Inspect the deployed files and requests for secrets, unexpected third parties, analytics, advertising, and application cookies
 - [x] Test the deployed app independently on a real phone and laptop and record browser/device details and results
-- [ ] Commit any deployment corrections and confirm that the deployed revision matches the repository
+- [x] Commit any deployment corrections and confirm that the deployed revision matches the repository
 
 ### Verify and revise
 
@@ -187,6 +187,7 @@ Complete one table per participant using labels P1, P2, and P3.
 
 ## Revisions
 
+- 2026-10-10: Deployment documentation and review evidence were committed as `cfb55a9` and pushed. GitHub Actions run `38097015278` succeeded for that SHA, matching both local HEAD and remote `main`; the Pages artifact contains the same application build as the prior successful run. The deployment-correction/revision-matching item is complete. The separate local R1–R12 acceptance matrix has not been completed, so the first Checkpoint 6 item remains open.
 - 2026-10-10: Developer tested the deployed HTTPS site on a Dell XPS running Windows and Microsoft Edge, and on an iPhone 18 Pro using the Google browser. Both loaded the mascot and supported city search, date selection, About/Home navigation, and phone bottom shortcuts; laptop checks also confirmed device geolocation, saved location after reload, and Retry. Edge DevTools showed GitHub Pages assets plus Open-Meteo forecast/geocoding requests and an empty Cookies table. The red Austin geocoding request had provisional headers without a response, consistent with the controller's cancellation of superseded typed queries; subsequent city searches succeeded. Built and served JavaScript scans found no obvious secret-shaped tokens, analytics, or advertising endpoints. This closes the deployed privacy and real-device items, while remaining Checkpoint 6 release bookkeeping is separate.
 - 2026-10-10: Developer reported that the public GitHub Pages site works on an iPhone 18 Pro using the Google browser, including the mascot, city search, seven-day selector, About, and bottom shortcuts. Laptop Edge was previously verified, but the laptop model/make and live Network-tab privacy result are still being collected before closing the remaining Checkpoint 6 review items.
 - 2026-10-10: Developer confirmed the public GitHub Pages site in laptop Edge loads the mascot, city search, all-day selector, About/Home navigation, device geolocation after permission, recent-city persistence after reload, and Retry without error. Combined with HTTP 200 for the HTML and referenced assets and HTTPS, this completes the deployed-subpath functionality item.
