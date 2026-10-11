@@ -127,6 +127,23 @@ describe('immutable recommendation state', () => {
   });
 
   it.each([
+    ['no modifiers', {}, [false, false, false, false], true],
+    ['rain', { precipitation: 40 }, [true, true, false, false], false],
+    ['snow', { snowfall: 0.2, weatherCode: 71 }, [false, true, false, false], false],
+    ['high UV', { uv: 9 }, [false, false, true, false], false],
+    ['heat', { apparent: 95 }, [false, false, false, true], false],
+  ])('keeps four reminder slots and the no-extras state for %s', (_name, profile, active, noExtrasNeeded) => {
+    const state = stateFrom(createOpenMeteoFixture({ profiles: [profile] }));
+
+    expect(state.reminders.map(({ key }) => key)).toEqual([
+      'umbrella', 'shoes', 'sunscreen', 'hydration',
+    ]);
+    expect(state.reminders.map((reminder) => reminder.active)).toEqual(active);
+    expect(state.reminders.map((reminder) => Boolean(reminder.text))).toEqual(active);
+    expect(state.noExtrasNeeded).toBe(noExtrasNeeded);
+  });
+
+  it.each([
     ['wind', { wind: 40 }, 'wind'],
     ['high UV', { uv: 9 }, 'high-uv'],
     ['heat', { apparent: 95 }, 'heat'],
@@ -149,6 +166,45 @@ describe('immutable recommendation state', () => {
       expect(existsSync(new URL(`../src/assets/character/weather/${modifier}-${category}.png`, import.meta.url))).toBe(true);
     }
     expect(PRIMARY_OUTFIT_DESCRIPTIONS.snow).not.toHaveProperty('hot');
+  });
+
+  it('selects the matching state, image, and copy for every eligible modifier/category pair', () => {
+    const categoryTemperatures = {
+      hot: 90,
+      warm: 75,
+      mild: 60,
+      cool: 45,
+      cold: 30,
+      'very-cold': 10,
+    };
+    const modifierProfiles = {
+      rain: { precipitation: 40 },
+      snow: { snowfall: 0.2, weatherCode: 71 },
+      wind: { wind: 16 },
+      'high-uv': { uv: 5 },
+      heat: {},
+    };
+
+    for (const [modifier, categories] of Object.entries(PRIMARY_OUTFIT_DESCRIPTIONS)) {
+      for (const [category, description] of Object.entries(categories)) {
+        const target = categoryTemperatures[category];
+        const apparent = modifier === 'heat' && target < 80
+          ? (hour) => hour === 12 ? 80 : (target * 13 - 80) / 12
+          : target;
+        const payload = createOpenMeteoFixture({
+          profiles: [{}, { ...modifierProfiles[modifier], apparent }],
+        });
+        const state = stateFrom(payload, '2026-10-06');
+
+        expect(state.category, `${modifier}/${category} category`).toBe(category);
+        expect(state.outfit.primaryModifier, `${modifier}/${category} primary modifier`)
+          .toBe(modifier === 'high-uv' ? 'highUv' : modifier);
+        expect(state.outfit.asset).toBe(`character/weather/${modifier}-${category}.png`);
+        expect(state.outfit.description).toBe(description);
+        expect(state.recommendation).toContain(description);
+        expect(state.mascotAlt).toContain(description);
+      }
+    }
   });
 
   it('keeps category and deterministic content unchanged when only display units change', () => {
@@ -203,6 +259,55 @@ describe('immutable recommendation state', () => {
     expect(today.summary.temperatures.current).not.toBeNull();
     expect(future.summary.kind).toBe('forecast');
     expect(future.summary.temperatures.averageFeelsLike).not.toBeNull();
+  });
+
+  it('preserves provider values in today and later-day summaries', () => {
+    const payload = createOpenMeteoFixture({
+      timezone: 'America/Chicago',
+      profiles: [
+        { apparent: 67, high: 82, low: 57, weatherCode: 0 },
+        { apparent: 65, high: 75, low: 55, weatherCode: 3 },
+      ],
+      current: { time: '2026-10-05T09:15', temperature: 71, apparent: 67, weatherCode: 0 },
+    });
+    const today = stateFrom(payload, '2026-10-05');
+    const future = stateFrom(payload, '2026-10-06');
+
+    expect(today.summary).toMatchObject({
+      kind: 'current',
+      date: payload.daily.time[0],
+      location: LOCATION_FIXTURE.label,
+      timezone: payload.timezone,
+      updatedAt: payload.current.time,
+      temperatures: {
+        current: { value: payload.current.temperature_2m, text: '71\u00b0F' },
+        feelsLike: { value: payload.current.apparent_temperature, text: '67\u00b0F' },
+        high: { value: payload.daily.temperature_2m_max[0], text: '82\u00b0F' },
+        low: { value: payload.daily.temperature_2m_min[0], text: '57\u00b0F' },
+      },
+    });
+    expect(future.summary).toMatchObject({
+      kind: 'forecast',
+      date: payload.daily.time[1],
+      location: LOCATION_FIXTURE.label,
+      timezone: payload.timezone,
+      temperatures: {
+        high: { value: payload.daily.temperature_2m_max[1], text: '75\u00b0F' },
+        low: { value: payload.daily.temperature_2m_min[1], text: '55\u00b0F' },
+        averageFeelsLike: { value: 65, text: '65\u00b0F' },
+      },
+    });
+    expect(today.summary.condition.key).toBe('clear');
+    expect(future.summary.condition.key).toBe('overcast');
+
+    const todayCelsius = stateFrom(payload, '2026-10-05', TEMPERATURE_UNITS.CELSIUS);
+    const futureCelsius = stateFrom(payload, '2026-10-06', TEMPERATURE_UNITS.CELSIUS);
+    expect(Object.values(todayCelsius.summary.temperatures).map(({ text }) => text))
+      .toEqual(['22\u00b0C', '19\u00b0C', '28\u00b0C', '14\u00b0C']);
+    expect(Object.values(futureCelsius.summary.temperatures).map(({ text }) => text))
+      .toEqual(['24\u00b0C', '13\u00b0C', '18\u00b0C']);
+    expect(todayCelsius.outfit).toEqual(today.outfit);
+    expect(futureCelsius.outfit).toEqual(future.outfit);
   });
 
   it('prevents an outfit recommendation when the entire apparent-temperature window is missing', () => {

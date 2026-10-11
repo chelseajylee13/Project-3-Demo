@@ -5,6 +5,8 @@ import { MISSING_VALUES_FIXTURE } from './fixtures/openMeteo.js';
 
 const austin = { label: 'Austin, Texas', latitude: 30.2672, longitude: -97.7431 };
 const dallas = { label: 'Dallas, Texas', latitude: 32.7767, longitude: -96.797 };
+const newYork = { label: 'New York, New York', latitude: 40.71427, longitude: -74.00597 };
+const losAngeles = { label: 'Los Angeles, California', latitude: 34.05223, longitude: -118.24368 };
 
 function deferred() {
   let resolve;
@@ -40,6 +42,63 @@ describe('weather data controller', () => {
     expect(controller.selectDate('2026-10-06')).toBe(true);
     expect(controller.getState().recommendation.selectedDate).toBe('2026-10-06');
     expect(controller.selectDate('2026-10-12')).toBe(false);
+    controller.dispose();
+  });
+
+  it('reselects the same outfit and reminder variations after date changes and a new session', async () => {
+    let savedLocation = null;
+    const dependencies = {
+      loadLocation: () => savedLocation,
+      saveLocation: (location) => { savedLocation = location; return true; },
+      requestForecast: async () => createOpenMeteoFixture({
+        profiles: [{}, { apparent: 72, precipitation: 40 }],
+      }),
+    };
+    const first = createWeatherController(dependencies);
+    await first.selectLocation(austin);
+    first.selectDate('2026-10-06');
+    const selected = first.getState().recommendation;
+
+    first.selectDate('2026-10-05');
+    first.selectDate('2026-10-06');
+    expect(first.getState().recommendation.outfit).toEqual(selected.outfit);
+    expect(first.getState().recommendation.reminders).toEqual(selected.reminders);
+    first.dispose();
+
+    const reopened = createWeatherController(dependencies);
+    await reopened.restore();
+    reopened.selectDate('2026-10-06');
+    expect(reopened.getState().recommendation.outfit).toEqual(selected.outfit);
+    expect(reopened.getState().recommendation.reminders).toEqual(selected.reminders);
+    reopened.dispose();
+  });
+
+  it.each([
+    [austin, 'America/Chicago'],
+    [newYork, 'America/New_York'],
+    [losAngeles, 'America/Los_Angeles'],
+  ])('selects all seven provider-local dates for %s in %s', async (location, timezone) => {
+    const controller = createWeatherController({
+      requestForecast: async () => createOpenMeteoFixture({ timezone }),
+      saveLocation: () => true,
+    });
+
+    await controller.selectLocation(location);
+    const dates = controller.getState().model.days.map(({ date }) => date);
+    expect(dates).toEqual([
+      '2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08',
+      '2026-10-09', '2026-10-10', '2026-10-11',
+    ]);
+
+    for (const [index, date] of dates.entries()) {
+      expect(controller.selectDate(date)).toBe(true);
+      const { selectedDate, recommendation } = controller.getState();
+      expect(selectedDate).toBe(date);
+      expect(recommendation.summary.date).toBe(date);
+      expect(recommendation.summary.kind).toBe(index === 0 ? 'current' : 'forecast');
+      expect(recommendation.summary.location).toBe(location.label);
+      expect(recommendation.summary.timezone).toBe(timezone);
+    }
     controller.dispose();
   });
 

@@ -363,6 +363,17 @@
   padding: 1rem;
 }
 
+.date-selector__hint,
+.date-selector__scroll-hint {
+  margin-block: 0 0.7rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.date-selector__scroll-hint {
+  display: none;
+}
+
 .section-label {
   margin-block: 0 0.65rem;
   font-size: 1rem;
@@ -375,6 +386,7 @@
 
 .date-selector button {
   min-width: 0;
+  min-height: 3.25rem;
 }
 
 .home-content {

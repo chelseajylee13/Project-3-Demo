@@ -46,13 +46,17 @@ function createLocationControls(state) {
 
 function createDateSelector(state) {
   const section = element('section', 'date-selector card');
-  section.setAttribute('aria-label', 'Choose forecast date');
-  section.append(element('h2', 'section-label', 'Next seven days'));
+  section.setAttribute('aria-labelledby', 'date-selector-heading');
+  const heading = element('h2', 'section-label', 'Choose a forecast day');
+  heading.id = 'date-selector-heading';
+  section.append(heading);
+  section.append(element('p', 'date-selector__hint', 'Select a day to see its weather and outfit.'));
   const choices = element('div', 'date-selector__choices');
   state.model.days.forEach(({ date }) => {
     choices.append(button(dateLabel(date), 'forecastDate', date, date === state.selectedDate));
   });
   section.append(choices);
+  section.append(element('p', 'date-selector__scroll-hint', 'Swipe sideways to see all seven days →'));
   return section;
 }
 

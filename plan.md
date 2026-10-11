@@ -122,16 +122,17 @@ Main risks are inconsistent or late artwork, incorrect timezone/date slicing, in
 
 ### Verify and revise
 
-- [ ] Record an R1-R12 verification result with evidence for every acceptance check in `spec.md`
+- [x] Record an R1-R12 verification result with evidence for every acceptance check in `spec.md`
 - [ ] Test multiple US locations and timezones, today and all six forecast dates, every recommendation category and modifier, combined modifiers, and every documented failure state
-- [ ] Verify that eligible outfit and reminder variations are selected independently rather than as fixed pairs
-- [ ] Verify that returning to a previously selected location/date after navigation, reload, and reopening shows the same eligible variations
+- [x] Verify that eligible outfit and reminder variations are selected independently rather than as fixed pairs
+- [x] Verify that returning to a previously selected location/date after navigation, reload, and reopening shows the same eligible variations
 - [ ] Test the deployed app, independently of the local version, on a real phone and a laptop, including both screens, accessibility, and one-handed controls
-- [ ] Complete the usability-test protocol and blank session records below before recruiting participants
-- [ ] Test with three peers and record each session
-- [ ] Separate observations from interpretations, compare all three sessions, and identify the strongest repeated or high-impact finding
-- [ ] Ask the Developer to choose the meaningful improvement supported by the findings
-- [ ] Add the approved improvement and its acceptance check to this checklist; update `spec.md` first if the intended result changes
+- [x] Complete the usability-test protocol and blank session records below before recruiting participants
+- [x] Test with three peers and record each session
+- [x] Separate observations from interpretations, compare all three sessions, and identify the strongest repeated or high-impact finding
+- [x] Ask the Developer to choose the meaningful improvement supported by the findings
+- [x] Add the approved improvement and its acceptance check to this checklist; update `spec.md` first if the intended result changes
+- [ ] Peer-finding revision: make the seven-day selector visibly actionable on laptop and easier to tap/scroll on phone; verify selected state, weather/outfit update, keyboard focus, and 200% zoom before publishing
 - [ ] Implement, verify, and redeploy at least one meaningful revision
 - [ ] Repeat affected regression, accessibility, responsive, and deployed checks and record the evidence
 - [ ] Commit the tested revision and confirm that the public URL serves it
@@ -177,16 +178,48 @@ Complete one table per participant using labels P1, P2, and P3.
 | 5 |  |  |  |  |
 | 6, if used |  |  |  |  |
 
+### Completed peer sessions (Developer report)
+
+The Developer supplied the following non-identifying summaries. Comments marked as quotations are the words reported; other phrasing is a summary, not a verbatim transcript. Viewport/orientation and location-permission status were not reported. The optional denied-permission task was not reported for any peer.
+
+| Peer and device | Task | Observed actions and reported comments | Result / barrier |
+| --- | --- | --- | --- |
+| P1 · iPhone 15 Pro Max, Safari | 1 | Searched Austin, TX; liked that the cute character's outfit matched the weather. | Completed easily. |
+| P1 | 2 | Selected a later day and said she would wear a jacket as it got colder. | Completed without difficulty. |
+| P1 | 3 | Noticed the rain warning and found advance notice helpful. | Completed. |
+| P1 | 4 | Initially could not find the °F/°C control, then found it and changed units. | Completed after hesitation. |
+| P1 | 5 | Opened About and read the weather-source and location-storage information. | Completed. |
+| P2 · Windows laptop, Chrome | 1 | Entered “New wark, NJ” as reported; saw weather and an outfit. | Completed without reported issue. |
+| P2 | 2 | Did not initially realize the dates were clickable; selected another day and described a cooler-weather hoodie. | Completed after hesitation. |
+| P2 | 3 | Found Forecast Change and asked for more specific rain timing. | Completed, with a timing question. |
+| P2 | 4 | Found the Celsius control quickly and returned to the selected day. | Completed. |
+| P2 | 5 | Looked first in the weather section for the data source, then found About. | Completed after hesitation. |
+| P3 · Samsung Galaxy S24, Chrome | 1 | Searched Seattle, WA and liked the outfit changes. | Completed. |
+| P3 | 2 | Had trouble selecting a later day because the date controls felt small. | Completed after hesitation. |
+| P3 | 3 | Found the weather message but was unsure whether rain was expected morning or afternoon; wanted to know whether to bring an umbrella before leaving. | Partially completed. |
+| P3 | 4 | Spent time finding the °F/°C control, then changed it and returned to the selected day. | Completed after hesitation. |
+| P3 | 5 | Found About but asked, “Does it save my actual location or just the city I searched?” | Partially completed; privacy wording unclear. |
+
 ### Findings and revision decision
 
-- **Patterns across sessions:** To be completed after all three sessions.
-- **Strongest findings:** To be completed after all three sessions.
-- **Developer-approved improvement:** To be completed after review of the evidence.
-- **Requirement and acceptance-check impact:** To be completed before implementation.
+- **Patterns across sessions (observations):** All three peers obtained weather and an outfit. P1 and P3 hesitated over the unit control; P2 and P3 hesitated over the date selector (clickability versus phone target size); P2 and P3 wanted clearer rain timing. P2 looked for the provider in the weather section, while P3 could not determine exactly which location information is saved. These are reported summaries, not measured timings or a representative sample.
+- **Interpretation:** Date selection is the strongest core-flow usability finding: two peers encountered distinct affordance/target-size barriers during the same essential later-day task. Unit discoverability is also repeated on the two phones; rain-timing communication has a high-impact question for P3's umbrella decision. The privacy question is a single but consequential comprehension issue. Possible changes are to make the date controls visibly actionable and easier to tap; make the unit switch easier to find; distinguish known rain times from unavailable timing; or state separately what manual search and device-location actions save. No change has been chosen yet.
+- **Strongest finding:** Later-day selection was less obvious or harder to tap for two of three peers, including the phone user who described the controls as small. This is a qualitative priority, not a statistical ranking.
+- **Developer-approved improvement:** Improve date-selector discoverability and phone tap/scroll usability. The Developer chose this finding and approved a scoped change: clearer heading and hint, larger phone targets, and an explicit sideways-swipe cue.
+- **Requirement and acceptance-check impact:** R2 in `spec.md` now includes the interaction expectation and a phone/laptop acceptance check for actionability, horizontal reach, selected state, weather/outfit update, 200% zoom, and keyboard focus.
 - **Revision verification:** To be completed after the updated public build is tested.
 
 ## Revisions
 
+- 2026-10-10: The Developer selected the date selector as the finding-based revision and approved the scoped interaction spec. Home now labels it “Choose a forecast day,” explains what selecting one does, makes narrow-screen buttons 3.5rem tall with horizontal scroll snapping, and shows a sideways-swipe cue. All 100 automated tests and the production build pass. Visual phone/laptop review, regression evidence, commit, and redeployment remain open.
+- 2026-10-10: Developer supplied three deployed-site peer summaries: P1 on iPhone 15 Pro Max/Safari, P2 on Windows laptop/Chrome, and P3 on Galaxy S24/Chrome. The session table above preserves the reported task observations and separates them from interpretation. All three found an outfit; repeated barriers were later-day selection (P2/P3), unit-switch discoverability (P1/P3), and rain-timing comprehension (P2/P3). P3 also raised a consequential question about whether manual city search or device geolocation is saved. Peer sessions and cross-session synthesis are complete; improvement selection and revision remain open for Developer approval.
+- 2026-10-10: A single table-driven verification now exercises all 29 eligible primary-modifier/temperature pairs and checks category, primary modifier, asset path, written description, recommendation, and image alternative text. The prior combined-state fixture verifies snow priority while rain/UV/heat remain in reminders and guidance. All 100 tests pass, and R4 is recorded as verified in `spec.md`. This is fixture and source evidence, not a claim that the new test-only revision is already deployed.
+- 2026-10-10: Added a controller regression that selects a later date, navigates to another date and back, disposes the controller, restores the one saved location in a new controller, and reselects the later date. Outfit and all reminder variations match exactly across those states; deterministic selection uses location coordinates, date, and separate content salts, not session history. All 99 tests pass. About/Home navigation retains the same controller, so it cannot change the selection. The app intentionally restores the location, not the selected date; after a reload or reopened session the User reselects that date to see the same variation.
+- 2026-10-10: Batched the remaining automated checks after the Developer asked to speed up verification. Added five table-driven reminder cases covering no modifiers, rain, snow, high UV, and heat; all 98 tests and the production build pass. `src/views/renderHome.js` renders exactly the four state-provided reminder cards and the no-extras message. R5 is now verified in `spec.md`. Existing salted-selection tests show that outfit and reminder choices are independent, so that checklist item is complete. The consistent deployed-app usability protocol and blank session template are ready before recruiting; actual P1–P3 observations and a finding-based revision remain open.
+- 2026-10-10: Developer confirmed all seven deployed date controls and the °F/°C behavior worked. Combined with multi-timezone/all-date and conversion tests plus `aria-pressed` source review, R2 is verified. At the Developer's request, remaining non-human verification will be batched to reduce review interruptions; the three peer sessions and improvement approval still require Developer participation.
+- 2026-10-10: Developer's fresh Edge InPrivate test confirmed no default forecast or geolocation prompt and one recent-location row after city selection; combined with controller denial/manual fallback tests, R1 is verified. A live Austin Open-Meteo response was passed through the production normalizer/recommendation builder; today and tomorrow summaries matched provider dates, timezone, current/apparent temperature, high/low, and future daytime apparent-temperature average. The view renders these state fields directly, completing R3. R2 remains Partial pending explicit browser confirmation of all seven selected states and unit displays.
+- 2026-10-10: Focused R2/R3 verification added controller checks for each of seven dates across Austin/Chicago, New York/Eastern, and Los Angeles/Pacific fixtures, plus exact today/future provider-value and all-summary-temperature conversion assertions. Live Open-Meteo calls for those cities returned their expected local timezone and seven dates, October 10–16. All 93 tests and the production build pass. Browser selected-state/unit and live payload-to-display comparisons remain open in the `spec.md` verification record.
+- 2026-10-10: Began “Verify and revise” with a fresh 89/89 test pass and successful production build. `spec.md` now records an evidence-backed result and remaining gap for each R1–R12 acceptance check. The first checklist item is checked because the results are recorded; several requirements remain Partial and require the focused checks listed there before they can be called verified.
 - 2026-10-10: Final Checkpoint 6 audit: before the first Pages push, Checkpoints 1–5 of the local build checklist were complete, all 89 automated tests passed, and the production build succeeded. The pre-deployment release gate is therefore checked. The item-by-item R1–R12 evidence matrix is a distinct task under “Verify and revise” and remains open; this checkpoint does not assert that later task is complete.
 - 2026-10-10: Deployment documentation and review evidence were committed as `cfb55a9` and pushed. GitHub Actions run `38097015278` succeeded for that SHA, matching both local HEAD and remote `main`; the Pages artifact contains the same application build as the prior successful run. The deployment-correction/revision-matching item is complete. The separate R1–R12 evidence matrix remains open under “Verify and revise.”
 - 2026-10-10: Developer tested the deployed HTTPS site on a Dell XPS running Windows and Microsoft Edge, and on an iPhone 18 Pro using the Google browser. Both loaded the mascot and supported city search, date selection, About/Home navigation, and phone bottom shortcuts; laptop checks also confirmed device geolocation, saved location after reload, and Retry. Edge DevTools showed GitHub Pages assets plus Open-Meteo forecast/geocoding requests and an empty Cookies table. The red Austin geocoding request had provisional headers without a response, consistent with the controller's cancellation of superseded typed queries; subsequent city searches succeeded. Built and served JavaScript scans found no obvious secret-shaped tokens, analytics, or advertising endpoints. This closes the deployed privacy and real-device items, while remaining Checkpoint 6 release bookkeeping is separate.

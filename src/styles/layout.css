@@ -17,10 +17,18 @@
     overflow-x: auto;
     flex-wrap: nowrap;
     padding-block-end: 0.3rem;
+    scroll-snap-type: x proximity;
   }
 
   .date-selector button {
-    flex: 0 0 auto;
+    flex: 0 0 8.5rem;
+    min-height: 3.5rem;
+    scroll-snap-align: start;
+  }
+
+  .date-selector__scroll-hint {
+    display: block;
+    margin-block: 0;
   }
 
   .site-header__inner {
