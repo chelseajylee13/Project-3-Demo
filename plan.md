@@ -141,8 +141,8 @@ Main risks are inconsistent or late artwork, incorrect timezone/date slicing, in
 ### Deliver
 
 - [ ] Confirm all brief deliverables and that `research.md`, `spec.md`, `plan.md`, and project run/deployment documentation match the finished app
-- [ ] Test every external source/provider link and confirm the privacy statement, Open-Meteo prototype/licensing limitation, and GitHub Pages logging disclosure are accurate
-- [ ] Confirm all shipped assets have creator, AI-assistance, or third-party license records as applicable
+- [x] Test every external source/provider link and confirm the privacy statement, Open-Meteo prototype/licensing limitation, and GitHub Pages logging disclosure are accurate
+- [x] Confirm all shipped assets have creator, AI-assistance, or third-party license records as applicable
 - [ ] Save planning, implementation, and later debrief chat transcripts in `transcripts/`
 - [ ] Add and complete `debrief.md`
 

@@ -209,11 +209,11 @@ All outfits are gender-inclusive campus basics. Weather-specific looks are compl
 | Reminder icons | Umbrella, water-resistant shoes, sunscreen, water | SVG | Created for PUPCAST from the approved visual direction; credit Chelsea Lee and disclose AI assistance if used |
 | Interface icons | Location, search, close, calendar, information, Back, external link, retry, and loading/status symbols | SVG/CSS | Created for PUPCAST; if replaced with a library, record the library and license here before use |
 
-Reference images 01–09 and AI-assisted concept images 10–17 are inspiration or process records only and must not ship as app assets. Final asset filenames, dimensions, and any third-party license details must be added here when assets are produced.
+Reference images 01–09 and AI-assisted concept images 10–17 are inspiration or process records only and do not ship as app assets. Final filenames, dimensions, production methods, review, credits, and the third-party font license are recorded below and in `src/assets/asset-manifest.json`.
 
 ### Production asset record
 
-The approved full-resolution PNGs below remain the production masters. The app now references mechanically resized transparent PNG delivery copies in `src/assets/delivery/`: 768 × 1152 for the master and complete outfits, and 160 × 160 for the logo. `scripts/create-delivery-pngs.ps1` records the repeatable resize method; visual review of the delivery copies is pending. This addresses the 2026-10-10 production-preview Lighthouse payload finding without changing the approved source artwork.
+The approved full-resolution PNGs below remain the production masters. The app references mechanically resized transparent PNG delivery copies in `src/assets/delivery/`: 768 × 1152 for the master and complete outfits, and 160 × 160 for the logo. `scripts/create-delivery-pngs.ps1` records the repeatable resize method. The Developer reviewed the resized logo and mascot in the production preview on 2026-10-10. This addresses the production-preview Lighthouse payload finding without changing the approved source artwork.
 
 | File | Dimensions | Production method | Review and credit |
 | --- | --- | --- | --- |

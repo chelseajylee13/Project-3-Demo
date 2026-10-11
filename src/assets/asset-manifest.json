@@ -29,7 +29,7 @@
   },
   "optimization": {
     "status": "reviewed",
-    "method": "Approved 1024x1536 PNG masters remain unchanged. For app delivery, System.Drawing HighQualityBicubic generates 768x1152 transparent PNG character copies and a 160x160 transparent PNG logo copy in src/assets/delivery/. Vite fingerprints and ships only the delivery copies referenced by the app. Visual review of these resized copies is pending.",
+    "method": "Approved 1024x1536 PNG masters remain unchanged. For app delivery, System.Drawing HighQualityBicubic generates 768x1152 transparent PNG character copies and a 160x160 transparent PNG logo copy in src/assets/delivery/. Vite fingerprints and ships only the delivery copies referenced by the app. Chelsea Lee reviewed the resized mascot and logo in the production preview on 2026-10-10.",
     "svgMethod": "Hand-authored SVGs use compact paths, a shared 64x64 or 24x24 viewBox, and no embedded metadata."
   },
   "groups": {
